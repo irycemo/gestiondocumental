@@ -52,6 +52,11 @@
             </div>
         @endif
 
+        <div class="col-span-6 sm:col-span-4">
+            <x-jet-label for="email" value="Nombre"/>
+            <x-jet-input  type="text" class="mt-1 block w-full" value="{{ auth()->user()->name }}" readonly/>
+        </div>
+
         <!-- Email -->
         <div class="col-span-6 sm:col-span-4">
             <x-jet-label for="email" value="{{ __('Email') }}" />

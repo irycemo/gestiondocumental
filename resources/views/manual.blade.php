@@ -149,7 +149,7 @@
                                 proporcionados. Al hacer click en cerrar se cerrará la ventana modal borrando la información proporcionada.
                             </p>
 
-                            <img class="mb-4 mt-4 rounded mx-auto" src="{{ asset('storage/img/manual/usuarios_modal_crear.jpg') }}" alt="Imágen buscar">
+                            <img class="mb-4 mt-4 rounded mx-auto" src="{{ asset('storage/img/manual/usuarios_modal_crear.jpg') }}" alt="Imágen crear">
 
                             <p>
                                 <strong>Editar usuario:</strong>
@@ -159,7 +159,7 @@
 
                             <img class="mb-4 mt-4 rounded mx-auto" src="{{ asset('storage/img/manual/usuarios_editar.jpg') }}" alt="Imágen buscar">
 
-                            <img class="mb-4 mt-4 rounded mx-auto" src="{{ asset('storage/img/manual/usuarios_modal_editar.jpg') }}" alt="Imágen buscar">
+                            <img class="mb-4 mt-4 rounded mx-auto" src="{{ asset('storage/img/manual/usuarios_modal_editar.jpg') }}" alt="Imágen editar">
 
                             <p>
                                 <strong>Borrar usuario:</strong>
@@ -167,7 +167,19 @@
                                 en la cual se mostrará una advertencia, dando la opcion de cancelar o borrar la información.
                             </p>
 
-                            <img class="mb-4 mt-4 rounded mx-auto" src="{{ asset('storage/img/manual/usuarios_borrar.jpg') }}" alt="Imágen buscar">
+                            <img class="mb-4 mt-4 rounded mx-auto" src="{{ asset('storage/img/manual/usuarios_borrar.jpg') }}" alt="Imágen borrar">
+
+                            <p>
+                                Al crear un usuario, su credenciales para iniciar sesión seran su correo y la contraseña "sistema", al tratar de iniciar sesión le pedira actualizar su contraseña.
+                            </p>
+
+                            <img class="mb-4 mt-4 rounded mx-auto" src="{{ asset('storage/img/manual/actualizar_contraseña.jpg') }}" alt="Imágen contraseña">
+
+                            <p>
+                                Puede revisar su perfil de usuario haciendo click en el circulo superior izquierdo en la opción "Mi perfil"
+                            </p>
+
+                            <img class="mb-4 mt-4 rounded mx-auto" src="{{ asset('storage/img/manual/perfil.jpg') }}" alt="Imágen perfil">
 
                         </div>
 

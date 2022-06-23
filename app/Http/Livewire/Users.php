@@ -39,24 +39,6 @@ class Users extends Component
         'location_id.required' => 'El campo ubicación es obligatorio.',
     ];
 
-    public function updatingSearch(){
-        $this->resetPage();
-    }
-
-    public function order($sort){
-
-        if($this->sort == $sort){
-            if($this->direction == 'desc'){
-                $this->direction = 'asc';
-            }else{
-                $this->direction = 'desc';
-            }
-        }else{
-            $this->sort = $sort;
-            $this->direction = 'asc';
-        }
-    }
-
     public function resetAll(){
         $this->reset('selected_id','name','email','status','role', 'telefono', 'modal', 'modalDelete', 'modalDeleteFile');
         $this->resetErrorBag();
@@ -104,6 +86,8 @@ class Users extends Component
             $this->resetAll();
 
         } catch (\Throwable $th) {
+
+            dd($th);
             $this->dispatchBrowserEvent('showMessage',['error', "Lo sentimos hubo un error inténtalo de nuevo"]);
 
             $this->resetAll();

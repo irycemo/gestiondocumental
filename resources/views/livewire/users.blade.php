@@ -323,7 +323,9 @@
                                 <span class="lg:hidden  absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Ubicaión</span>
 
                                 @if($user->office)
-                                    {{ $user->office ? $user->office->name : $user->officeBelonging->name }}
+                                    {{ $user->office->name }}
+                                @elseif($user->officeBelonging)
+                                    {{ $user->officeBelonging->name }}
                                 @endif
 
                             </td>
