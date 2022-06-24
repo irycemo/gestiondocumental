@@ -18,7 +18,7 @@
 
 ## Local
 
-- Clonar repostorio "git clone https://github.com/kikorobledo/gestiondocumental.git"
+- Clonar repostorio "git clone https://github.com/irycemo/gestiondocumental.git"
 - Correr  "composer update", dentro de la carpeta del desarrollo
 - Correr "npm install".
 - Correr "npm run dev".

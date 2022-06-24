@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use App\Models\Office;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -20,6 +21,10 @@ class Tracking extends Model
 
     public function files(){
         return $this->morphMany(File::class, 'fileable');
+    }
+
+    public function officeBelonging(){
+        return $this->belongsTo(Office::class, 'office_id');
     }
 
     public function createdBy(){

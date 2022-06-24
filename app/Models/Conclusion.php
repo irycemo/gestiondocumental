@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\File;
 use App\Models\Entrie;
+use App\Models\Office;
 use Illuminate\Support\Str;
 use App\Http\Traits\ModelsTrait;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +24,10 @@ class Conclusion extends Model
 
     public function files(){
         return $this->morphMany(File::class, 'fileable');
+    }
+
+    public function officeBelonging(){
+        return $this->belongsTo(Office::class, 'office_id');
     }
 
     protected function limit(): Attribute{

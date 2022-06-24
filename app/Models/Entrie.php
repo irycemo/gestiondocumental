@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-use App\Http\Traits\ModelsTrait;
 use Carbon\Carbon;
 use App\Models\File;
-
 use App\Models\User;
+
+use App\Models\Office;
 use App\Models\Conclusion;
 use Illuminate\Support\Str;
+use App\Http\Traits\ModelsTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -38,6 +39,10 @@ class Entrie extends Model
 
     public function conclusions(){
         return $this->hasMany(Conclusion::class);
+    }
+
+    public function officeBelonging(){
+        return $this->belongsTo(Office::class, 'office_id');
     }
 
     public function files(){
