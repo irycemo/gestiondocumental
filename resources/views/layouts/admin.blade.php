@@ -9,7 +9,7 @@
             <div class="w-100 flex-none bg-white border-b-2 border-b-grey-200 flex flex-row p-5 pr-0 justify-between items-center h-20 ">
 
                 {{-- Logo --}}
-                <a href="/" class="mx-auto">
+                <a href="{{ route('dashboard') }}" class="mx-auto">
 
                     <img class="h-16" src="{{ asset('storage/img/logo2.png') }}" alt="Logo">
 
