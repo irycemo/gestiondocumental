@@ -38,8 +38,6 @@ class FortifyServiceProvider extends ServiceProvider
 
             $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
 
-            $email = (string) $request->email;
-
             if($request->password == 'sistema'){
 
                 $user = User::where('email', $request->email)->first();
