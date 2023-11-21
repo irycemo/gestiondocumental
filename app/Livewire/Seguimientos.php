@@ -212,9 +212,23 @@ class Seguimientos extends Component
         array_push($this->fields, 'files', 'files_edit', 'file_id', 'modalEliminar');
 
         if(auth()->user()->hasRole(['Titular', 'Usuario']))
-            $this->entradas = Entrada::select('id', 'folio', 'numero_oficio')->where('oficina_id', auth()->user()->oficina_id)->orderBy('folio')->get();
+
+            $this->entradas = Entrada::select('id', 'folio', 'numero_oficio')
+                                        ->withCount('conclusiones')
+                                        ->whereHas('asignadoA', function($q){
+                                            return $q->where('user_id', auth()->id());
+                                        })
+                                        ->orderBy('folio')->get()
+                                        ->where('conclusiones_count', 0);
+
         else
-            $this->entradas = Entrada::select('id', 'folio', 'numero_oficio')->orderBy('folio')->get();
+            $this->entradas = Entrada::select('id', 'folio', 'numero_oficio')
+                                        ->withCount('conclusiones')
+                                        ->whereHas('asignadoA', function($q){
+                                            return $q->where('user_id', auth()->id());
+                                        })
+                                        ->orderBy('folio')->get()
+                                        ->where('conclusiones_count', 0);
 
     }
 

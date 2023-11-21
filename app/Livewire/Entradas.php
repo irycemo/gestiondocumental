@@ -261,11 +261,29 @@ class Entradas extends Component
                                 ->orderBy($this->sort, $this->direction)
                                 ->paginate($this->pagination);
 
-        }elseif(auth()->user()->hasRole(['Titular', 'Usuario'])){
+        }elseif(auth()->user()->hasRole('Titular')){
 
             $entradas = Entrada::with('creadoPor', 'actualizadoPor', 'origen', 'destino', 'asignadoA')
                                 ->withCount(['seguimientos', 'conclusiones'])
-                                ->where('oficina_id', auth()->user()->id)
+                                ->whereHas('asignadoA', function($q){
+                                    return $q->where('user_id', auth()->id());
+                                })
+                                ->where(function($q){
+                                    $q->where('folio', 'LIKE', '%' . $this->search . '%')
+                                        ->orWhere('asunto', 'LIKE', '%' . $this->search . '%')
+                                        ->orWhere('numero_oficio', 'LIKE', '%' . $this->search . '%');
+                                })
+                                ->orWhere('creado_por', auth()->id())
+                                ->orderBy($this->sort, $this->direction)
+                                ->paginate($this->pagination);
+
+        }elseif(auth()->user()->hasRole('Usuario')){
+
+            $entradas = Entrada::with('creadoPor', 'actualizadoPor', 'origen', 'destino', 'asignadoA')
+                                ->withCount(['seguimientos', 'conclusiones'])
+                                ->whereHas('asignadoA', function($q){
+                                    return $q->where('user_id', auth()->id());
+                                })
                                 ->where(function($q){
                                     $q->where('folio', 'LIKE', '%' . $this->search . '%')
                                         ->orWhere('asunto', 'LIKE', '%' . $this->search . '%')
@@ -277,9 +295,12 @@ class Entradas extends Component
         }elseif(auth()->user()->hasRole(['Oficialia de partes'])){
 
             $entradas = Entrada::with('creadoPor', 'actualizadoPor', 'origen', 'destino', 'asignadoA')
-                                ->where('folio', 'LIKE', '%' . $this->search . '%')
-                                ->orWhere('asunto', 'LIKE', '%' . $this->search . '%')
-                                ->orWhere('numero_oficio', 'LIKE', '%' . $this->search . '%')
+                                ->where('creado_por', auth()->id())
+                                ->where(function($q){
+                                    $q->where('folio', 'LIKE', '%' . $this->search . '%')
+                                        ->orWhere('asunto', 'LIKE', '%' . $this->search . '%')
+                                        ->orWhere('numero_oficio', 'LIKE', '%' . $this->search . '%');
+                                })
                                 ->orderBy($this->sort, $this->direction)
                                 ->paginate($this->pagination);
 
