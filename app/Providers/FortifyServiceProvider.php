@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Laravel\Fortify\Fortify;
+use Illuminate\Support\Facades\Hash;
 use App\Actions\Fortify\CreateNewUser;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -42,7 +43,7 @@ class FortifyServiceProvider extends ServiceProvider
 
                 $user = User::where('email', $request->email)->first();
 
-                if($user && $user->password == 'sistema')
+                if($user && Hash::check($request->password, $user->password))
                     return redirect()->route('setpassword', $request->email )->with('mensaje', 'Ingresa tu nueva contraseña.');
                 else
                     return redirect()->back()->with('mensaje', 'El usuario ya ha registrado su contraseña.');
