@@ -142,7 +142,7 @@
 
                         <div class="flex flex-row flex-wrap gap-2 items-center justify-end">
 
-                            @foreach ($entrada->files as $file)
+                            @foreach ($seguimiento->files as $file)
 
                                     <div class="flex gap-2 bg-red-200 rounded-full p-1">
 
@@ -204,7 +204,7 @@
 
                         <div class="flex flex-row flex-wrap gap-2 items-center justify-end">
 
-                            @foreach ($entrada->files as $file)
+                            @foreach ($conclusion->files as $file)
 
                                     <div class="flex gap-2 bg-red-200 rounded-full p-1">
 

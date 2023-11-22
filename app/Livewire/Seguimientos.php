@@ -239,14 +239,24 @@ class Seguimientos extends Component
 
             $seguimientos = Seguimiento::with('creadoPor', 'actualizadoPor', 'entrada')
                                 ->where('oficio_respuesta', 'LIKE', '%' . $this->search . '%')
+                                ->orWhereHas('entrada', function ($q){
+                                    $q->where('numero_oficio', 'LIKE', '%' . $this->search . '%')
+                                        ->orWhere('folio', 'LIKE', '%' . $this->search . '%');
+                                })
                                 ->orderBy($this->sort, $this->direction)
                                 ->paginate($this->pagination);
 
         }elseif(auth()->user()->hasRole(['Titular', 'Usuario'])){
 
             $seguimientos = Seguimiento::with('creadoPor', 'actualizadoPor', 'entrada')
-                                ->where('oficina_id', auth()->user()->id)
-                                ->where('oficio_respuesta', 'LIKE', '%' . $this->search . '%')
+                                ->where('creado_por', auth()->user()->id)
+                                ->where(function ($q){
+                                    $q->where('oficio_respuesta', 'LIKE', '%' . $this->search . '%')
+                                        ->orWhereHas('entrada', function ($q){
+                                            $q->where('numero_oficio', 'LIKE', '%' . $this->search . '%')
+                                                ->orWhere('folio', 'LIKE', '%' . $this->search . '%');
+                                        });
+                                })
                                 ->orderBy($this->sort, $this->direction)
                                 ->paginate($this->pagination);
 
