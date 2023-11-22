@@ -230,13 +230,21 @@ class Conclusiones extends Component
         if(auth()->user()->hasRole('Administrador')){
 
             $conclusiones = Conclusion::with('creadoPor', 'actualizadoPor', 'entrada')
+                                ->orWhereHas('entrada', function ($q){
+                                    $q->where('numero_oficio', 'LIKE', '%' . $this->search . '%')
+                                        ->orWhere('folio', 'LIKE', '%' . $this->search . '%');
+                                })
                                 ->orderBy($this->sort, $this->direction)
                                 ->paginate($this->pagination);
 
         }elseif(auth()->user()->hasRole(['Titular', 'Usuario'])){
 
             $conclusiones = Conclusion::with('creadoPor', 'actualizadoPor', 'entrada')
-                                ->where('oficina_id', auth()->user()->id)
+                                ->where('creado_por', auth()->user()->id)
+                                ->orWhereHas('entrada', function ($q){
+                                    $q->where('numero_oficio', 'LIKE', '%' . $this->search . '%')
+                                        ->orWhere('folio', 'LIKE', '%' . $this->search . '%');
+                                })
                                 ->orderBy($this->sort, $this->direction)
                                 ->paginate($this->pagination);
 
