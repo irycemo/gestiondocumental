@@ -43,6 +43,9 @@ class FortifyServiceProvider extends ServiceProvider
 
                 $user = User::where('email', $request->email)->first();
 
+                if(!$user)
+                    return redirect()->back()->with('mensaje', 'El correo no esta registrado.');
+
                 if($user && Hash::check($request->password, $user->password))
                     return redirect()->route('setpassword', $request->email )->with('mensaje', 'Ingresa tu nueva contraseña.');
                 else

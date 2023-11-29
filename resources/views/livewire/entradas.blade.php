@@ -361,44 +361,44 @@
                 <x-input-group for="asignados" label="Asignar a" :error="$errors->first('asignados')" class="w-full">
 
                     <div x-data = "{ model: @entangle('asignados') }"
-                    x-init =
-                    "
-                        select2 = $($refs.select)
-                            .select2({
-                                placeholder: 'Asignar a',
-                                width: '100%',
+                        x-init =
+                        "
+                            select2 = $($refs.select)
+                                .select2({
+                                    placeholder: 'Asignar a',
+                                    width: '100%',
+                                })
+
+                            select2.on('change', function(){
+                                $wire.set('asignados', $(this).val())
                             })
 
-                        select2.on('change', function(){
-                            $wire.set('asignados', $(this).val())
-                        })
+                            select2.on('keyup', function(e) {
+                                if (e.keyCode === 13){
+                                    $wire.set('asignados', $('.select2').val())
+                                }
+                            });
 
-                        select2.on('keyup', function(e) {
-                            if (e.keyCode === 13){
-                                $wire.set('asignados', $('.select2').val())
-                            }
-                        });
+                            $watch('model', (value) => {
+                                select2.val(value).trigger('change');
+                            });
+                        "
+                        wire:ignore>
 
-                        $watch('model', (value) => {
-                            select2.val(value).trigger('change');
-                        });
-                    "
-                    wire:ignore>
+                        <select class="bg-white rounded text-sm w-full z-50"
+                                wire:model.live="asignados"
+                                x-ref="select"
+                                multiple="multiple">
 
-                    <select class="bg-white rounded text-sm w-full z-50"
-                            wire:model.live="asignados"
-                            x-ref="select"
-                            multiple="multiple">
+                            @foreach ($usuarios as $user)
 
-                        @foreach ($usuarios as $user)
+                                <option value="{{ $user->id }}">{{ $user->name }}</option>
 
-                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                            @endforeach
 
-                        @endforeach
+                        </select>
 
-                    </select>
-
-                </div>
+                    </div>
 
                 </x-input-group>
 
@@ -406,7 +406,7 @@
 
             <div class="flex flex-col md:flex-row justify-between gap-3 mb-3">
 
-                <x-input-group for="modelo_editar.asunto" label="Asignar a" :error="$errors->first('modelo_editar.asunto')" class="w-full">
+                <x-input-group for="modelo_editar.asunto" label="Asunto" :error="$errors->first('modelo_editar.asunto')" class="w-full">
 
                     <x-quill-text wire:model="modelo_editar.asunto" :initial-value="$modelo_editar->asunto"/>
 
