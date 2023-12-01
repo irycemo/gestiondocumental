@@ -241,7 +241,7 @@ class Conclusiones extends Component
 
             $conclusiones = Conclusion::with('creadoPor', 'actualizadoPor', 'entrada')
                                 ->where('creado_por', auth()->user()->id)
-                                ->orWhereHas('entrada', function ($q){
+                                ->whereHas('entrada', function ($q){
                                     $q->where('numero_oficio', 'LIKE', '%' . $this->search . '%')
                                         ->orWhere('folio', 'LIKE', '%' . $this->search . '%');
                                 })
