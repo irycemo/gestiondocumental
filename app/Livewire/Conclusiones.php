@@ -210,6 +210,9 @@ class Conclusiones extends Component
         if(auth()->user()->hasRole(['Titular', 'Usuario']))
             $this->entradas = Entrada::select('id', 'folio', 'numero_oficio')
                                         ->where('creado_por', auth()->id())
+                                        ->whereHas('asignadoA', function($q){
+                                            return $q->where('user_id', auth()->id());
+                                        })
                                         ->orderBy('folio')->get();
 
         else
