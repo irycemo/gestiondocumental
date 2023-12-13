@@ -215,9 +215,9 @@
 
                 </x-input-group>
 
-                <x-input-group for="modelo_editar.fecha_respuesta" label="Fecha respuesta" :error="$errors->first('modelo_editar.fecha_respuesta')" class="w-full">
+                <x-input-group for="modelo_editar.date_for_editing" label="Fecha respuesta" :error="$errors->first('modelo_editar.date_for_editing')" class="w-full">
 
-                    <x-input-text type="date" id="modelo_editar.fecha_respuesta" wire:model="modelo_editar.fecha_respuesta" />
+                    <x-input-date id="modelo_editar.date_for_editing" wire:model.live="modelo_editar.date_for_editing" />
 
                 </x-input-group>
 
@@ -245,7 +245,7 @@
 
                     <x-input-group for="modelo_editar.comentario" label="Comentario" :error="$errors->first('modelo_editar.comentario')" class="w-full">
 
-                        <x-quill-text wire:model="modelo_editar.comentario" :initial-value="$modelo_editar->comentario"/>
+                        <x-input-text-area wire:model="modelo_editar.comentario" />
 
                     </x-input-group>
 

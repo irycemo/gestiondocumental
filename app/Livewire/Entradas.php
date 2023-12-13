@@ -11,7 +11,6 @@ use App\Models\Dependencia;
 use Livewire\WithPagination;
 use App\Jobs\NotificacionesJob;
 use App\Traits\ComponentesTrait;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
@@ -39,7 +38,7 @@ class Entradas extends Component
         return [
             'modelo_editar.numero_oficio' => 'required',
             'modelo_editar.asunto' => 'required',
-            'modelo_editar.fecha_termino' => 'required|date',
+            'modelo_editar.date_for_editing' => 'required|date',
             'modelo_editar.destinatario' => 'required',
             'modelo_editar.dependencia_id' => 'required',
             'files.*' => 'mimes:pdf',
@@ -48,7 +47,7 @@ class Entradas extends Component
 
     protected $validationAttributes  = [
         'modelo_editar.numero_oficio' => 'número de oficio',
-        'modelo_editar.fecha_termino' => 'fecha de termino',
+        'modelo_editar.date_for_editing' => 'fecha de termino',
         'modelo_editar.dependencia_id' => 'dependencia',
         'files.*.mimes' => 'Solo se admiten archivos PDF',
     ];

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use App\Models\File;
 use App\Models\Entrada;
 use Illuminate\Support\Str;
@@ -22,6 +23,8 @@ class Seguimiento extends Model
         'fecha_respuesta' => 'date'
     ];
 
+    protected $appends = ['date_for_editing'];
+
     public function entrada(){
         return $this->belongsTo(Entrada::class);
     }
@@ -30,14 +33,14 @@ class Seguimiento extends Model
         return $this->morphMany(File::class, 'fileable');
     }
 
-    public function officeBelonging(){
-        return $this->belongsTo(Office::class, 'office_id');
+    public function getDateForEditingAttribute()
+    {
+        return $this->fecha_respuesta?->format('d-m-Y');
     }
 
-    protected function limit(): Attribute{
-        return Attribute::make(
-            get: fn($value) => Str::limit(strip_tags($this->comentario), 100)
-        );
+    public function setDateForEditingAttribute($value)
+    {
+        $this->fecha_respuesta = Carbon::parse($value);
     }
 
 }

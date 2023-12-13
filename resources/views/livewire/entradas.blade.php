@@ -312,9 +312,9 @@
 
                 </x-input-group>
 
-                <x-input-group for="modelo_editar.fecha_termino" label="Fecha de término" :error="$errors->first('modelo_editar.fecha_termino')" class="w-full">
+                <x-input-group for="modelo_editar.date_for_editing" label="Fecha de término" :error="$errors->first('modelo_editar.date_for_editing')" class="w-full">
 
-                    <x-input-text type="date" id="modelo_editar.fecha_termino" wire:model="modelo_editar.fecha_termino" />
+                    <x-input-date id="modelo_editar.date_for_editing" wire:model.live="modelo_editar.date_for_editing" />
 
                 </x-input-group>
 
@@ -408,7 +408,7 @@
 
                 <x-input-group for="modelo_editar.asunto" label="Asunto" :error="$errors->first('modelo_editar.asunto')" class="w-full">
 
-                    <x-quill-text wire:model="modelo_editar.asunto" :initial-value="$modelo_editar->asunto"/>
+                    <x-input-text-area wire:model="modelo_editar.asunto" />
 
                 </x-input-group>
 

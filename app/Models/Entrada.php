@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use App\Models\File;
 use App\Models\User;
 use App\Models\Oficina;
@@ -25,6 +26,8 @@ class Entrada extends Model
     protected $casts = [
         'fecha_termino' => 'date',
     ];
+
+    protected $appends = ['date_for_editing'];
 
     public function origen(){
         return $this->belongsTo(Dependencia::class, 'dependencia_id');
@@ -58,6 +61,16 @@ class Entrada extends Model
         return Attribute::make(
             get: fn($value) => Str::limit(strip_tags($this->asunto), 100)
         );
+    }
+
+    public function getDateForEditingAttribute()
+    {
+        return $this->fecha_termino?->format('d-m-Y');
+    }
+
+    public function setDateForEditingAttribute($value)
+    {
+        $this->fecha_termino = Carbon::parse($value);
     }
 
 }

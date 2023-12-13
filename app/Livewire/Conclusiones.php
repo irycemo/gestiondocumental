@@ -207,18 +207,13 @@ class Conclusiones extends Component
 
         array_push($this->fields, 'files', 'files_edit', 'file_id', 'modalEliminar');
 
-        if(auth()->user()->hasRole(['Titular', 'Usuario']))
+        if(auth()->user()->hasRole('Titular'))
             $this->entradas = Entrada::select('id', 'folio', 'numero_oficio')
-                                        ->whereHas('asignadoA', function($q){
-                                            return $q->where('user_id', auth()->id());
-                                        })
+                                        ->where('creado_por', auth()->id())
                                         ->orderBy('folio')->get();
 
         else
             $this->entradas = Entrada::select('id', 'folio', 'numero_oficio')
-                                        ->whereHas('asignadoA', function($q){
-                                            return $q->where('user_id', auth()->id());
-                                        })
                                         ->orderBy('folio')->get();
 
 

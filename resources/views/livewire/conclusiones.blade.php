@@ -215,7 +215,7 @@
 
                     <x-input-group for="modelo_editar.comentario" label="Comentario" :error="$errors->first('modelo_editar.comentario')" class="w-full">
 
-                        <x-quill-text wire:model="modelo_editar.comentario" :initial-value="$modelo_editar->comentario"/>
+                        <x-input-text-area wire:model="modelo_editar.comentario" />
 
                     </x-input-group>
 

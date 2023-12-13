@@ -32,7 +32,7 @@ class Seguimientos extends Component
     protected function rules(){
         return [
             'modelo_editar.oficio_respuesta' => 'required',
-            'modelo_editar.fecha_respuesta' => 'required|date',
+            'modelo_editar.date_for_editing' => 'required|date',
             'modelo_editar.comentario' => 'required',
             'modelo_editar.entrada_id' => 'required',
             'files.*' => 'mimes:pdf',
@@ -41,7 +41,7 @@ class Seguimientos extends Component
 
     protected $validationAttributes  = [
         'modelo_editar.oficio_respuesta' => 'oficio de oficio',
-        'modelo_editar.fecha_respuesta' => 'fecha de respuesta',
+        'modelo_editar.date_for_editing' => 'fecha de respuesta',
         'files.*.mimes' => 'Solo se admiten archivos PDF',
     ];
 
@@ -214,19 +214,15 @@ class Seguimientos extends Component
         if(auth()->user()->hasRole(['Titular', 'Usuario']))
 
             $this->entradas = Entrada::select('id', 'folio', 'numero_oficio')
-                                        ->withCount('conclusiones')
                                         ->whereHas('asignadoA', function($q){
                                             return $q->where('user_id', auth()->id());
                                         })
+                                        ->orWhere('creado_por', auth()->id())
                                         ->orderBy('folio')->get()
                                         ->where('conclusiones_count', 0);
 
         else
             $this->entradas = Entrada::select('id', 'folio', 'numero_oficio')
-                                        ->withCount('conclusiones')
-                                        ->whereHas('asignadoA', function($q){
-                                            return $q->where('user_id', auth()->id());
-                                        })
                                         ->orderBy('folio')->get()
                                         ->where('conclusiones_count', 0);
 
