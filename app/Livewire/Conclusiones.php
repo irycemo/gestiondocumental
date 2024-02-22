@@ -207,7 +207,7 @@ class Conclusiones extends Component
 
         array_push($this->fields, 'files', 'files_edit', 'file_id', 'modalEliminar');
 
-        if(auth()->user()->hasRole(['Titular', 'Usuario']))
+        if(auth()->user()->hasRole(['Titular', 'Usuario', 'Oficialia de partes']))
             $this->entradas = Entrada::select('id', 'folio', 'numero_oficio')
                                         ->where('creado_por', auth()->id())
                                         ->orWhereHas('asignadoA', function($q){
@@ -235,7 +235,7 @@ class Conclusiones extends Component
                                 ->orderBy($this->sort, $this->direction)
                                 ->paginate($this->pagination);
 
-        }elseif(auth()->user()->hasRole(['Titular', 'Usuario'])){
+        }elseif(auth()->user()->hasRole(['Titular', 'Usuario', 'Oficialia de partes'])){
 
             $conclusiones = Conclusion::with('creadoPor', 'actualizadoPor', 'entrada')
                                 ->where('creado_por', auth()->user()->id)

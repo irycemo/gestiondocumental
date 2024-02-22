@@ -241,10 +241,10 @@ class Entradas extends Component
 
         $this->oficinas = Oficina::orderBy('name')->get();
 
-        if(auth()->user()->hasRole(['Titular', 'Usuario']))
+        if(auth()->user()->hasRole('Titular'))
             $this->usuarios = User::where('oficina_id', auth()->user()->oficina_id)->orderBy('name')->get();
         else
-            $this->usuarios = User::where('id','!=', auth()->user()->id)->orderBy('name')->get();
+            $this->usuarios = User::orderBy('name')->get();
     }
 
     public function render()
