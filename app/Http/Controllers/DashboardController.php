@@ -22,7 +22,7 @@ class DashboardController extends Controller
 
             return view('dashboard', compact('entries', 'trackings', 'conclusions','entries_count', 'trackings_count', 'conclusions_count'));
 
-        }elseif(auth()->user()->hasRole('Titular', 'Oficialia de partes')){
+        }elseif(auth()->user()->hasRole(['Titular', 'Oficialia de partes'])){
 
             $entries = Entrada::with('origen')
                                 ->where('creado_por', auth()->id())
