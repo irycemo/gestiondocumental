@@ -227,7 +227,6 @@ class Entradas extends Component
 
             Log::error("Error al borrar archivo de entrada por el usuario: (id: " . auth()->user()->id . ") " . auth()->user()->name . ". " . $th);
             $this->dispatch('showMessage',['error', "Lo sentimos hubo un error inténtalo de nuevo"]);
-            $this->resetearTodo();
         }
     }
 
