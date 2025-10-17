@@ -97,39 +97,47 @@
 
                             <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Acciones</span>
 
-                            <div class="flex justify-center lg:justify-start gap-2">
+                            <div class="ml-3 relative" x-data="{ open_drop_down:false }">
 
-                                @can('Editar conclusion')
+                                <div>
 
-                                    <x-button-blue
-                                        wire:click="abrirModalEditar({{ $conclusion->id }})"
-                                        wire:loading.attr="disabled"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4 mr-2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    <button x-on:click="open_drop_down=true" type="button" class="rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
                                         </svg>
 
-                                        <span>Editar</span>
+                                    </button>
 
-                                    </x-button-blue>
+                                </div>
 
-                                @endcan
+                                <div x-cloak x-show="open_drop_down" x-on:click="open_drop_down=false" x-on:click.away="open_drop_down=false" class="z-50 origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu">
 
-                                @can('Borrar conclusion')
+                                    @can('Editar conclusion')
 
-                                    <x-button-red
-                                        wire:click="abrirModalBorrar({{ $conclusion->id }})"
-                                        wire:loading.attr="disabled"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4 mr-2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
+                                        <button
+                                            wire:click="abrirModalEditar({{ $conclusion->id }})"
+                                            wire:loading.attr="disabled"
+                                            class="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
+                                            role="menuitem">
+                                            Editar
+                                        </button>
 
-                                        <span>Eliminar</span>
+                                    @endcan
 
-                                    </x-button-red>
+                                    @can('Borrar conclusion')
 
-                                @endcan
+                                        <button
+                                            wire:click="abrirModalBorrar({{ $conclusion->id }})"
+                                            wire:loading.attr="disabled"
+                                            class="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
+                                            role="menuitem">
+                                            Eliminar
+                                        </button>
+
+                                    @endcan
+
+                                </div>
 
                             </div>
 
@@ -180,32 +188,58 @@
         <x-slot name="title">
 
             @if($crear)
-                Nueva conclusión
+            Nueva conclusión
             @elseif($editar)
-                Editar conclusión
+            Editar conclusión
             @endif
 
         </x-slot>
 
         <x-slot name="content">
 
-            <div class="flex flex-col md:flex-row justify-between gap-3 mb-3">
+            <div class="w-full mb-3">
 
-                <x-input-group for="modelo_editar.entrada_id" label="Entrada" :error="$errors->first('modelo_editar.entrada_id')" class="w-full">
+                <div
+                    x-data="selectSearch({{$entradas}})"
+                    x-init="init('{{ $modelo_editar->entrada?->folio . ' ' . $modelo_editar->entrada?->numero_oficio }}')"
+                    @click.away="closeSelect()"
+                    @keydown.escape="closeSelect()"
+                    class=" bg-white rounded text-sm border border-gray-500 relative">
 
-                    <x-input-select id="modelo_editar.entrada_id" wire:model="modelo_editar.entrada_id" class="">
+                    <div class="flex w-full p-2  cursor-pointer" x-on:click="focus()">
 
-                        <option value="">Seleccione una opción</option>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-4 " fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20" />
+                        </svg>
 
-                        @foreach ($entradas as $entrada)
+                        <p class="truncate" x-text="placeholder"></p>
 
-                            <option value="{{ $entrada->id }}">{{ $entrada->folio }} - {{ $entrada->numero_oficio }}</option>
+                    </div>
 
-                        @endforeach
+                    <div class="mt-0.5 w-full bg-white border-gray-500 rounded-b-md border absolute top-full left-0 z-30" x-show="open">
 
-                    </x-input-select>
+                        <div class="relative z-30 w-full p-2 bg-white">
 
-                </x-input-group>
+                            <input id="entradaIinput" placeholder="Buscar.." type="text" x-model="search" x-on:click.prevent.stop="open=true" class="block w-full  border border-gray-300 rounded-md focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 sm:text-sm sm:leading-5">
+
+                        </div>
+
+                        <ul class="h-44 p-2 w-full flex flex-col overflow-y-auto">
+                            <template x-for="entrada in Object.values(options)">
+
+                                <span
+                                    x-text="entrada['entrada']"
+                                    class="hover:bg-gray-100 py-1 px-4 rounded-xl cursor-pointer"
+                                    x-on:click.prevent.stop="selected(entrada['entrada'])"
+                                    x-on:click="$wire.$set('entrada_id_seleccionada', entrada['id'])">
+                                </span>
+
+                            </template>
+                        </ul>
+
+                    </div>
+
+                </div>
 
             </div>
 
@@ -233,42 +267,6 @@
 
             </div>
 
-            <x-input-group for="files.*" label="" :error="$errors->first('files.*')" class="w-full">
-
-                <div class="flex flex-row flex-wrap gap-2 items-center mb-2">
-
-                    @foreach ($files_edit as $file)
-
-                            <div class="flex gap-2 bg-red-200 rounded-full p-1">
-
-                                <a
-                                    href="{{ Storage::disk('pdfs')->url($file['url'])}}"
-                                    target="_blank"
-                                    class="bg-red-400 hover:shadow-lg text-white text-xs px-3 py-1 rounded-full hover:bg-red-700 focus:outline-none w-auto"
-                                >
-                                PDF {{ $loop->iteration }}
-                                </a>
-
-                                <button
-                                    wire:click="openModalDeleteFile({{$file['id']}})"
-                                    wire:loading.attr="disabled"
-                                    wire:target="openModalDeleteFile({{$file['id']}})"
-                                    class="bg-red-400 hover:shadow-lg text-white text-xs px-3 py-1 rounded-full hover:bg-red-700 flex focus:outline-none"
-                                >
-
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
-
-                                </button>
-
-                            </div>
-
-                    @endforeach
-
-                </div>
-
-            </x-input-group>
 
         </x-slot>
 
@@ -379,5 +377,73 @@
         </x-slot>
 
     </x-confirmation-modal>
+
+    @push('scripts')
+
+        <script>
+
+            function selectSearch(data){
+
+                return{
+                    data:data,
+                    placeholder: "",
+                    open:false,
+                    search:'',
+                    options: {},
+                    focus(){
+                        this.open=true
+                        setTimeout(() => {
+                            document.getElementById('entradaIinput').focus()
+                        }, "100")
+                    },
+                    init(entrada){
+
+                        if(entrada && entrada != ' '){
+
+                            this.placeholder = entrada;
+
+                        }else{
+
+                            this.placeholder = "Seleccione una entrada";
+
+                        }
+
+                        this.resetOptions();
+
+                        this.$watch('search', ((values) => {
+
+                            if (!this.open || !values) {
+                                this.resetOptions()
+                                return
+                            }
+                            this.options = Object.keys(this.data)
+                                .filter((key) => this.data[key].entrada.toLowerCase().includes(values.toLowerCase()))
+                                .reduce((options, key) => {
+                                    options[key] = this.data[key]
+                                    return options
+                                }, {})
+                        }))
+                    },
+                    resetOptions: function() {
+                        this.options = Object.keys(this.data)
+                            .reduce((options, key) => {
+                                options[key] = this.data[key]
+                                return options
+                            }, {})
+                    },
+                    closeSelect: function() {
+                        this.open = false
+                        this.search = ''
+                    },
+                    selected(name){
+                        this.placeholder = name;
+                        this.open = false;
+                    }
+                }
+            }
+
+        </script>
+
+    @endpush
 
 </div>

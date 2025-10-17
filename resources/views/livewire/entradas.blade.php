@@ -147,13 +147,13 @@
                                 <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Fecha de termino</span>
 
                                 @if( now()->diffInDays($entrada->fecha_termino) <= 5 )
-                                    <span class="bg-red-500 text-white px-2 py-1 rounded-full text-xs">{{ $entrada->fecha_termino->format('d-m-Y') }}</span>
+                                    <span class="bg-red-500 text-white px-2 py-1 rounded-full text-xs whitespace-nowrap">{{ $entrada->fecha_termino->format('d-m-Y') }}</span>
                                 @elseif( now() > $entrada->fecha_termino)
-                                    <span class="bg-gray-500 text-white px-2 py-1 rounded-full text-xs">{{ $entrada->fecha_termino->format('d-m-Y') }}</span>
+                                    <span class="bg-gray-500 text-white px-2 py-1 rounded-full text-xs whitespace-nowrap">{{ $entrada->fecha_termino->format('d-m-Y') }}</span>
                                 @elseif( now()->diffInDays($entrada->fecha_termino) <= 15 )
-                                    <span class="bg-yellow-500 text-white px-2 py-1 rounded-full text-xs">{{ $entrada->fecha_termino->format('d-m-Y') }}</span>
+                                    <span class="bg-yellow-500 text-white px-2 py-1 rounded-full text-xs whitespace-nowrap">{{ $entrada->fecha_termino->format('d-m-Y') }}</span>
                                 @elseif( now()->diffInDays($entrada->fecha_termino) > 15 )
-                                    <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs">{{ $entrada->fecha_termino->format('d-m-Y') }}</span>
+                                    <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs whitespace-nowrap">{{ $entrada->fecha_termino->format('d-m-Y') }}</span>
                                 @endif
 
                             </x-table.cell>
@@ -197,54 +197,58 @@
 
                             <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Acciones</span>
 
-                            <div class="flex md:flex-col justify-center lg:justify-start gap-2">
+                            <div class="ml-3 relative" x-data="{ open_drop_down:false }">
 
-                                @can('Ver entrada')
+                                <div>
 
-                                    <x-link-green href="{{ route('entrada', $entrada->id ) }}">
+                                    <button x-on:click="open_drop_down=true" type="button" class="rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
 
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
                                         </svg>
 
-                                        <span>Ver</span>
+                                    </button>
 
-                                    </x-link-green>
+                                </div>
 
-                                @endcan
+                                <div x-cloak x-show="open_drop_down" x-on:click="open_drop_down=false" x-on:click.away="open_drop_down=false" class="z-50 origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu">
 
-                                @can('Editar entrada')
+                                    @can('Ver entrada')
 
-                                    <x-button-blue
-                                        wire:click="abrirModalEditar({{ $entrada->id }})"
-                                        wire:loading.attr="disabled"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4 mr-2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
+                                        <a
+                                            href="{{ route('entrada', $entrada->id ) }}"
+                                            class="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
+                                            role="menuitem">
+                                            Ver
+                                        </a>
 
-                                        <span>Editar</span>
+                                    @endcan
 
-                                    </x-button-blue>
+                                    @can('Editar entrada')
 
-                                @endcan
+                                        <button
+                                            wire:click="abrirModalEditar({{ $entrada->id }})"
+                                            wire:loading.attr="disabled"
+                                            class="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
+                                            role="menuitem">
+                                            Editar
+                                        </button>
 
-                                @can('Borrar entrada')
+                                    @endcan
 
-                                    <x-button-red
-                                        wire:click="abrirModalBorrar({{ $entrada->id }})"
-                                        wire:loading.attr="disabled"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4 mr-2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
+                                    @can('Borrar entrada')
 
-                                        <span>Eliminar</span>
+                                        <button
+                                            wire:click="abrirModalBorrar({{ $entrada->id }})"
+                                            wire:loading.attr="disabled"
+                                            class="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
+                                            role="menuitem">
+                                            Eliminar
+                                        </button>
 
-                                    </x-button-red>
+                                    @endcan
 
-                                @endcan
+                                </div>
 
                             </div>
 
@@ -433,7 +437,7 @@
                             <div class="flex gap-2 bg-red-200 rounded-full p-1">
 
                                 <a
-                                    href="{{ Storage::disk('pdfs')->url($file['url'])}}"
+                                    href="{{ $file->getLink() }}"
                                     target="_blank"
                                     class="bg-red-400 hover:shadow-lg text-white text-xs px-3 py-1 rounded-full hover:bg-red-700 focus:outline-none w-auto"
                                 >

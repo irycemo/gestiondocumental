@@ -11,6 +11,7 @@ use App\Models\Dependencia;
 use Livewire\WithPagination;
 use App\Jobs\NotificacionesJob;
 use App\Traits\ComponentesTrait;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
@@ -97,7 +98,7 @@ class Entradas extends Component
 
         try {
 
-            /* DB::transaction(function () { */
+            DB::transaction(function () {
 
                 $this->modelo_editar->folio = (Entrada::max('folio') ?? 0) + 1;
                 $this->modelo_editar->oficina_id = auth()->user()->oficina_id;
@@ -108,7 +109,15 @@ class Entradas extends Component
 
                     foreach($this->files as $file){
 
-                        $pdf = $file->store('/', 'pdfs');
+                        if(app()->isProduction()){
+
+                            $pdf = $file->store(config('services.ses.ruta_archivos'), 's3');
+
+                        }else{
+
+                            $pdf = $file->store('/', 'pdfs');
+
+                        }
 
                         File::create([
                             'fileable_id' => $this->modelo_editar->id,
@@ -122,17 +131,18 @@ class Entradas extends Component
 
                 $this->modelo_editar->asignadoA()->attach($this->asignados);
 
-                foreach ($this->asignados as $asignado) {
 
-                    dispatch(new NotificacionesJob(intval($asignado), $this->modelo_editar->folio));
+            });
 
-                }
+            foreach ($this->asignados as $asignado) {
 
-                $this->resetearTodo();
+                dispatch(new NotificacionesJob(intval($asignado), $this->modelo_editar->folio));
 
-                $this->dispatch('mostrarMensaje', ['success', "La entrada se creó con éxito."]);
+            }
 
-            /* }); */
+            $this->resetearTodo();
+
+            $this->dispatch('mostrarMensaje', ['success', "La entrada se creó con éxito."]);
 
         } catch (\Throwable $th){
 
@@ -150,26 +160,38 @@ class Entradas extends Component
 
         try{
 
-            $this->modelo_editar->actualizado_por = auth()->user()->id;
-            $this->modelo_editar->save();
+            DB::transaction(function () {
 
-            if(isset($this->files)){
+                $this->modelo_editar->actualizado_por = auth()->user()->id;
+                $this->modelo_editar->save();
 
-                foreach($this->files as $file){
+                if(isset($this->files)){
 
-                    $pdf = $file->store('/', 'pdfs');
+                    foreach($this->files as $file){
 
-                    File::create([
-                        'fileable_id' => $this->modelo_editar->id,
-                        'fileable_type' => 'App\Models\Entrada',
-                        'url' => $pdf
-                    ]);
+                        if(app()->isProduction()){
+
+                            $pdf = $file->store(config('services.ses.ruta_archivos'), 's3');
+
+                        }else{
+
+                            $pdf = $file->store('/', 'pdfs');
+
+                        }
+
+                        File::create([
+                            'fileable_id' => $this->modelo_editar->id,
+                            'fileable_type' => 'App\Models\Entrada',
+                            'url' => $pdf
+                        ]);
+                    }
+
+                    $this->dispatch('removeFiles');
                 }
 
-                $this->dispatch('removeFiles');
-            }
+                $this->modelo_editar->asignadoA()->sync($this->asignados);
 
-            $this->modelo_editar->asignadoA()->sync($this->asignados);
+            });
 
             $this->resetearTodo();
 
@@ -189,9 +211,27 @@ class Entradas extends Component
 
         try{
 
-            $permiso = Entrada::find($this->selected_id);
+            DB::transaction(function () {
 
-            $permiso->delete();
+                $entrada = Entrada::find($this->selected_id);
+
+                foreach ($entrada->files as $file) {
+
+                    if(app()->isProduction()){
+
+                        Storage::disk('s3')->delete($file->url);
+
+                    }else{
+
+                        Storage::disk('pdfs')->delete($file->url);
+
+                    }
+
+                }
+
+                $entrada->delete();
+
+            });
 
             $this->resetearTodo($borrado = true);
 
@@ -211,11 +251,23 @@ class Entradas extends Component
 
         try {
 
-            $file = File::findorFail($this->file_id);
+            DB::transaction(function () {
 
-            Storage::disk('pdfs')->delete($file->url);
+                $file = File::findorFail($this->file_id);
 
-            $file->delete();
+                if(app()->isProduction()){
+
+                    Storage::disk('s3')->delete($file->url);
+
+                }else{
+
+                    Storage::disk('pdfs')->delete($file->url);
+
+                }
+
+                $file->delete();
+
+            });
 
             $this->dispatch('showMessage',['success', "El archivo ha sido eliminado con éxito."]);
 
@@ -240,10 +292,16 @@ class Entradas extends Component
 
         $this->oficinas = Oficina::orderBy('name')->get();
 
-        if(auth()->user()->hasRole('Titular'))
+        if(auth()->user()->hasRole('Titular')){
+
             $this->usuarios = User::where('oficina_id', auth()->user()->oficina_id)->orderBy('name')->get();
-        else
+
+        }else{
+
             $this->usuarios = User::orderBy('name')->get();
+
+        }
+
     }
 
     public function render()

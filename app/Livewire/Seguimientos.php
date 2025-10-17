@@ -26,6 +26,9 @@ class Seguimientos extends Component
 
     public $modalEliminar = false;
     public $entradas;
+    public $entradas_seleccionadas = [];
+
+    public $entrada_id_seleccionada;
 
     public Seguimiento $modelo_editar;
 
@@ -34,7 +37,7 @@ class Seguimientos extends Component
             'modelo_editar.oficio_respuesta' => 'required',
             'modelo_editar.date_for_editing' => 'required|date',
             'modelo_editar.comentario' => 'required',
-            'modelo_editar.entrada_id' => 'required',
+            'entrada_id_seleccionada' => 'required',
             'files.*' => 'mimes:pdf',
          ];
     }
@@ -64,6 +67,8 @@ class Seguimientos extends Component
         if($this->modelo_editar->isNot($modelo))
             $this->modelo_editar = $modelo;
 
+        $this->entrada_id_seleccionada = $this->modelo_editar->entrada_id;
+
         $this->files_edit = File::where('fileable_id', $modelo->id)->where('fileable_type', 'App\Models\Seguimiento')->get();
 
     }
@@ -86,13 +91,22 @@ class Seguimientos extends Component
 
                 $this->modelo_editar->oficina_id = auth()->user()->oficina_id;
                 $this->modelo_editar->creado_por = auth()->user()->id;
+                $this->modelo_editar->entrada_id = $this->entrada_id_seleccionada;
                 $this->modelo_editar->save();
 
                 if(isset($this->files)){
 
                     foreach($this->files as $file){
 
-                        $pdf = $file->store('/', 'pdfs');
+                        if(app()->isProduction()){
+
+                            $pdf = $file->store(config('services.ses.ruta_archivos'), 's3');
+
+                        }else{
+
+                            $pdf = $file->store('/', 'pdfs');
+
+                        }
 
                         File::create([
                             'fileable_id' => $this->modelo_editar->id,
@@ -127,20 +141,33 @@ class Seguimientos extends Component
         try{
 
             $this->modelo_editar->actualizado_por = auth()->user()->id;
+            $this->modelo_editar->entrada_id = $this->entrada_id_seleccionada;
             $this->modelo_editar->save();
 
             if(isset($this->files)){
 
-                foreach($this->files as $file){
+                DB::transaction(function () {
 
-                    $pdf = $file->store('/', 'pdfs');
+                    foreach($this->files as $file){
 
-                    File::create([
-                        'fileable_id' => $this->modelo_editar->id,
-                        'fileable_type' => 'App\Models\Seguimiento',
-                        'url' => $pdf
-                    ]);
-                }
+                        if(app()->isProduction()){
+
+                            $pdf = $file->store(config('services.ses.ruta_archivos'), 's3');
+
+                        }else{
+
+                            $pdf = $file->store('/', 'pdfs');
+
+                        }
+
+                        File::create([
+                            'fileable_id' => $this->modelo_editar->id,
+                            'fileable_type' => 'App\Models\Seguimiento',
+                            'url' => $pdf
+                        ]);
+                    }
+
+                });
 
                 $this->dispatch('removeFiles');
             }
@@ -163,9 +190,27 @@ class Seguimientos extends Component
 
         try{
 
-            $seguimiento = Seguimiento::find($this->selected_id);
+            DB::transaction(function () {
 
-            $seguimiento->delete();
+                $seguimiento = Seguimiento::find($this->selected_id);
+
+                foreach ($seguimiento->files as $file) {
+
+                    if(app()->isProduction()){
+
+                        Storage::disk('s3')->delete($file->url);
+
+                    }else{
+
+                        Storage::disk('pdfs')->delete($file->url);
+
+                    }
+
+                }
+
+                $seguimiento->delete();
+
+            });
 
             $this->resetearTodo($borrado = true);
 
@@ -185,11 +230,23 @@ class Seguimientos extends Component
 
         try {
 
-            $file = File::findorFail($this->file_id);
+            DB::transaction(function () {
 
-            Storage::disk('pdfs')->delete($file->url);
+                $file = File::findorFail($this->file_id);
 
-            $file->delete();
+                if(app()->isProduction()){
+
+                    Storage::disk('s3')->delete($file->url);
+
+                }else{
+
+                    Storage::disk('pdfs')->delete($file->url);
+
+                }
+
+                $file->delete();
+
+            });
 
             $this->dispatch('showMessage',['success', "El archivo ha sido eliminado con éxito."]);
 
@@ -211,20 +268,38 @@ class Seguimientos extends Component
 
         array_push($this->fields, 'files', 'files_edit', 'file_id', 'modalEliminar');
 
-        if(auth()->user()->hasRole(['Titular', 'Usuario']))
+        if(auth()->user()->hasRole(['Titular', 'Usuario'])){
 
             $this->entradas = Entrada::select('id', 'folio', 'numero_oficio')
                                         ->whereHas('asignadoA', function($q){
                                             return $q->where('user_id', auth()->id());
                                         })
                                         ->orWhere('creado_por', auth()->id())
-                                        ->orderBy('folio')->get()
-                                        ->where('conclusiones_count', 0);
+                                        ->whereDoesntHave('conclusiones')
+                                        ->get()
+                                        ->map(function ($entrada){
+                                            return [
+                                                'id' => $entrada->id,
+                                                'entrada' => $entrada->folio . ' - ' . $entrada->numero_oficio
+                                            ];
+                                        });
 
-        else
+        }else{
+
             $this->entradas = Entrada::select('id', 'folio', 'numero_oficio')
-                                        ->orderBy('folio')->get()
-                                        ->where('conclusiones_count', 0);
+                                        ->orderBy('folio')
+                                        ->whereDoesntHave('conclusiones')
+                                        ->get()
+                                        ->map(function ($entrada){
+                                            return [
+                                                'id' => $entrada->id,
+                                                'entrada' => $entrada->folio . ' - ' . $entrada->numero_oficio
+                                            ];
+                                        });
+
+        }
+
+
 
     }
 

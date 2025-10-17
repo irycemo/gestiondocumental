@@ -3,11 +3,10 @@
 namespace App\Providers;
 
 use Livewire\Livewire;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
-use Opcodes\LogViewer\Facades\LogViewer;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,23 +26,26 @@ class AppServiceProvider extends ServiceProvider
 
         Model::shouldBeStrict();
 
-        LogViewer::auth(function ($request) {
+        if(app()->isProduction()){
 
-            if(Auth::user()->hasRole('Administrador'))
-                return true;
-            else
-                abort(401, 'Unauthorized');
-
-        });
-
-        if(!env('LOCAL')){
+            URL::forceScheme('https');
 
             Livewire::setScriptRoute(function ($handle) {
-                return Route::get('/gestiondocumental/public/livewire/livewire.js', $handle);
+                return Route::get('/gestiondocumental/public/vendor/livewire/livewire.js', $handle);
             });
 
             Livewire::setUpdateRoute(function ($handle) {
-                return Route::post('/gestiondocumental/public/livewire/update', $handle);
+                return Route::post('/gestiondocumental/livewire/update', $handle);
+            });
+
+        }elseif(app()->environment('staging')){
+
+            Livewire::setScriptRoute(function ($handle) {
+                return Route::get('/gestiondocumental/public/vendor/livewire/livewire.js', $handle);
+            });
+
+            Livewire::setUpdateRoute(function ($handle) {
+                return Route::post('/gestiondocumental/livewire/update', $handle);
             });
 
         }

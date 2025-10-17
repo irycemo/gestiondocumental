@@ -26,19 +26,23 @@ class Conclusiones extends Component
 
     public $modalEliminar = false;
     public $entradas;
+    public $entradas_seleccionadas = [];
+
+    public $entrada_id_seleccionada;
 
     public Conclusion $modelo_editar;
 
     protected function rules(){
         return [
             'modelo_editar.comentario' => 'required',
-            'modelo_editar.entrada_id' => 'required',
+            'entrada_id_seleccionada' => 'required',
             'files.*' => 'mimes:pdf',
          ];
     }
 
     protected $validationAttributes  = [
         'files.*.mimes' => 'Solo se admiten archivos PDF',
+        'entrada_id_seleccionada' => 'entrada'
     ];
 
     public function crearModeloVacio(){
@@ -82,13 +86,22 @@ class Conclusiones extends Component
 
                 $this->modelo_editar->oficina_id = auth()->user()->oficina_id;
                 $this->modelo_editar->creado_por = auth()->user()->id;
+                $this->modelo_editar->entrada_id_seleccionada = $this->entrada_id_seleccionada;
                 $this->modelo_editar->save();
 
                 if(isset($this->files)){
 
                     foreach($this->files as $file){
 
-                        $pdf = $file->store('/', 'pdfs');
+                        if(app()->isProduction()){
+
+                            $pdf = $file->store(config('services.ses.ruta_archivos'), 's3');
+
+                        }else{
+
+                            $pdf = $file->store('/', 'pdfs');
+
+                        }
 
                         File::create([
                             'fileable_id' => $this->modelo_editar->id,
@@ -122,24 +135,37 @@ class Conclusiones extends Component
 
         try{
 
-            $this->modelo_editar->actualizado_por = auth()->user()->id;
-            $this->modelo_editar->save();
+            DB::transaction(function () {
 
-            if(isset($this->files)){
+                $this->modelo_editar->actualizado_por = auth()->user()->id;
+                $this->modelo_editar->entrada_id_seleccionada = $this->entrada_id_seleccionada;
+                $this->modelo_editar->save();
 
-                foreach($this->files as $file){
+                if(isset($this->files)){
 
-                    $pdf = $file->store('/', 'pdfs');
+                    foreach($this->files as $file){
 
-                    File::create([
-                        'fileable_id' => $this->modelo_editar->id,
-                        'fileable_type' => 'App\Models\Conclusion',
-                        'url' => $pdf
-                    ]);
+                        if(app()->isProduction()){
+
+                            $pdf = $file->store(config('services.ses.ruta_archivos'), 's3');
+
+                        }else{
+
+                            $pdf = $file->store('/', 'pdfs');
+
+                        }
+
+                        File::create([
+                            'fileable_id' => $this->modelo_editar->id,
+                            'fileable_type' => 'App\Models\Conclusion',
+                            'url' => $pdf
+                        ]);
+                    }
+
+                    $this->dispatch('removeFiles');
                 }
 
-                $this->dispatch('removeFiles');
-            }
+            });
 
             $this->resetearTodo();
 
@@ -159,9 +185,27 @@ class Conclusiones extends Component
 
         try{
 
-            $conclusion = Conclusion::find($this->selected_id);
+            DB::transaction(function () {
 
-            $conclusion->delete();
+                $conclusion = Conclusion::find($this->selected_id);
+
+                foreach ($conclusion->files as $file) {
+
+                    if(app()->isProduction()){
+
+                        Storage::disk('s3')->delete($file->url);
+
+                    }else{
+
+                        Storage::disk('pdfs')->delete($file->url);
+
+                    }
+
+                }
+
+                $conclusion->delete();
+
+            });
 
             $this->resetearTodo($borrado = true);
 
@@ -181,11 +225,23 @@ class Conclusiones extends Component
 
         try {
 
-            $file = File::findorFail($this->file_id);
+            DB::transaction(function () {
 
-            Storage::disk('pdfs')->delete($file->url);
+                $file = File::findorFail($this->file_id);
 
-            $file->delete();
+                if(app()->isProduction()){
+
+                    Storage::disk('s3')->delete($file->url);
+
+                }else{
+
+                    Storage::disk('pdfs')->delete($file->url);
+
+                }
+
+                $file->delete();
+
+            });
 
             $this->dispatch('showMessage',['success', "El archivo ha sido eliminado con éxito."]);
 
@@ -207,17 +263,36 @@ class Conclusiones extends Component
 
         array_push($this->fields, 'files', 'files_edit', 'file_id', 'modalEliminar');
 
-        if(auth()->user()->hasRole(['Titular', 'Usuario', 'Oficialia de partes']))
+        if(auth()->user()->hasRole(['Titular', 'Usuario'])){
+
             $this->entradas = Entrada::select('id', 'folio', 'numero_oficio')
-                                        ->where('creado_por', auth()->id())
-                                        ->orWhereHas('asignadoA', function($q){
+                                        ->whereHas('asignadoA', function($q){
                                             return $q->where('user_id', auth()->id());
                                         })
-                                        ->orderBy('folio')->get();
+                                        ->orWhere('creado_por', auth()->id())
+                                        ->whereDoesntHave('conclusiones')
+                                        ->get()
+                                        ->map(function ($entrada){
+                                            return [
+                                                'id' => $entrada->id,
+                                                'entrada' => $entrada->folio . ' - ' . $entrada->numero_oficio
+                                            ];
+                                        });
 
-        else
+        }else{
+
             $this->entradas = Entrada::select('id', 'folio', 'numero_oficio')
-                                        ->orderBy('folio')->get();
+                                        ->orderBy('folio')
+                                        ->whereDoesntHave('conclusiones')
+                                        ->get()
+                                        ->map(function ($entrada){
+                                            return [
+                                                'id' => $entrada->id,
+                                                'entrada' => $entrada->folio . ' - ' . $entrada->numero_oficio
+                                            ];
+                                        });
+
+        }
 
 
     }
