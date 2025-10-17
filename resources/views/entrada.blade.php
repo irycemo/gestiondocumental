@@ -81,7 +81,7 @@
                             <div class="flex gap-2 bg-red-200 rounded-full p-1">
 
                                 <a
-                                    href="{{ Storage::disk('pdfs')->url($file['url'])}}"
+                                    href="{{ $file->getLink() }}"
                                     target="_blank"
                                     class="bg-red-400 hover:shadow-lg text-white text-xs px-3 py-1 rounded-full hover:bg-red-700 focus:outline-none w-auto"
                                 >
@@ -147,7 +147,7 @@
                                     <div class="flex gap-2 bg-red-200 rounded-full p-1">
 
                                         <a
-                                            href="{{ Storage::disk('pdfs')->url($file['url'])}}"
+                                            href="{{ $file->getLink() }}"
                                             target="_blank"
                                             class="bg-red-400 hover:shadow-lg text-white text-xs px-3 py-1 rounded-full hover:bg-red-700 focus:outline-none w-auto"
                                         >
@@ -209,7 +209,7 @@
                                     <div class="flex gap-2 bg-red-200 rounded-full p-1">
 
                                         <a
-                                            href="{{ Storage::disk('pdfs')->url($file['url'])}}"
+                                            href="{{ $file->getLink() }}"
                                             target="_blank"
                                             class="bg-red-400 hover:shadow-lg text-white text-xs px-3 py-1 rounded-full hover:bg-red-700 focus:outline-none w-auto"
                                         >
