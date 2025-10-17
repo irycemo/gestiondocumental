@@ -23,15 +23,11 @@ class File extends Model
 
             if(Str::contains($this->url, config('services.ses.ruta_archivos'))){
 
-                info("Entra 1");
-
                 return Storage::disk('s3')->temporaryUrl($this->url, now()->addMinutes(10));
 
             }else{
 
-                info("Entra 2");
-
-                return Storage::disk('s3')->temporaryUrl(config('services.ses.ruta_documento_entrada') . '/' . $this->url, now()->addMinutes(10));
+                return Storage::disk('s3')->temporaryUrl(config('services.ses.ruta_archivos') . '/' . $this->url, now()->addMinutes(10));
 
             }
 
