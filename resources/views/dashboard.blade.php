@@ -115,7 +115,7 @@
 
             @forelse ($entries as $entrie)
 
-                <div class="flex justify-between items-center py-3 space-x-4">
+                <div class="flex-col justify-between items-center py-3 lg:space-x-4 space-y-3 lg:space-y-0">
 
                     <div class=" bg-gray-100 rounded-lg w-full">
 
