@@ -22,7 +22,7 @@ class File extends Model
         if(app()->isProduction()){
 
 
-            info($this->url , config('services.ses.ruta_archivos'));
+            info(config('services.ses.ruta_archivos'));
             if(Str::contains($this->url, config('services.ses.ruta_archivos'))){
 
 
