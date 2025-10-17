@@ -21,10 +21,8 @@ class File extends Model
 
         if(app()->isProduction()){
 
-
-            info(config('services.ses.ruta_archivos'));
             if(Str::contains($this->url, config('services.ses.ruta_archivos'))){
-
+                info(config('services.ses.ruta_archivos'));
 
                 return Storage::disk('s3')->temporaryUrl($this->url, now()->addMinutes(10));
 
