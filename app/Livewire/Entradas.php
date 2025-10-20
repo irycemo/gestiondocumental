@@ -8,6 +8,7 @@ use App\Models\Entrada;
 use App\Models\Oficina;
 use Livewire\Component;
 use App\Models\Dependencia;
+use Illuminate\Support\Str;
 use Livewire\WithPagination;
 use App\Jobs\NotificacionesJob;
 use App\Traits\ComponentesTrait;
@@ -112,9 +113,9 @@ class Entradas extends Component
 
                         if(app()->isProduction()){
 
-                            info($file);
+                            $nombre_final = Str::random(40) . '.pdf';
 
-                            $pdf = $file->store(config('services.ses.ruta_archivos'), 's3');
+                            Storage::disk('s3')->put(config('services.ses.ruta_archivos') . '/' . $nombre_final, $file);
 
                         }else{
 
