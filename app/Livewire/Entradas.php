@@ -42,7 +42,7 @@ class Entradas extends Component
             'modelo_editar.date_for_editing' => 'required|date',
             'modelo_editar.destinatario' => 'required',
             'modelo_editar.dependencia_id' => 'required',
-            'files.*' => 'mimes:pdf',
+            'files.*' => 'nullable',
          ];
     }
 
