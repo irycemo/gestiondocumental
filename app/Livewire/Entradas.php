@@ -112,6 +112,8 @@ class Entradas extends Component
 
                         if(app()->isProduction()){
 
+                            info($file);
+
                             $pdf = $file->store(config('services.ses.ruta_archivos'), 's3');
 
                         }else{
