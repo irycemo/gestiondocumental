@@ -43,6 +43,7 @@ class Entradas extends Component
             'modelo_editar.destinatario' => 'required',
             'modelo_editar.dependencia_id' => 'required',
             'files' => 'required',
+            'files.*' => 'required',
          ];
     }
 
