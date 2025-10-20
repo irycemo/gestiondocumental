@@ -113,9 +113,9 @@ class Entradas extends Component
 
                         if(app()->isProduction()){
 
-                            $nombre_final = Str::random(40) . '.pdf';
+                            $pdf = Str::random(40) . '.pdf';
 
-                            Storage::disk('s3')->put(config('services.ses.ruta_archivos') . '/' . $nombre_final, $file);
+                            Storage::disk('s3')->put(config('services.ses.ruta_archivos') . '/' . $pdf, $file);
 
                         }else{
 
