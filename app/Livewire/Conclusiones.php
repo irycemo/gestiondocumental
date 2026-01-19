@@ -86,7 +86,7 @@ class Conclusiones extends Component
 
                 $this->modelo_editar->oficina_id = auth()->user()->oficina_id;
                 $this->modelo_editar->creado_por = auth()->user()->id;
-                $this->modelo_editar->entrada_id_seleccionada = $this->entrada_id_seleccionada;
+                $this->modelo_editar->entrada_id = $this->entrada_id_seleccionada;
                 $this->modelo_editar->save();
 
                 if(isset($this->files)){
@@ -302,9 +302,11 @@ class Conclusiones extends Component
 
         if(auth()->user()->hasRole('Administrador')){
 
-            $conclusiones = Conclusion::with('creadoPor', 'actualizadoPor', 'entrada')
+            $conclusiones = Conclusion::select('id', 'entrada_id', 'comentario','created_at', 'updated_at', 'creado_por', 'actualizado_por', 'oficina_id')
+                                ->with('creadoPor:id,name', 'actualizadoPor:id,name', 'entrada:id,folio,numero_oficio')
                                 ->orWhereHas('entrada', function ($q){
-                                    $q->where('numero_oficio', 'LIKE', '%' . $this->search . '%')
+                                    $q->select('id', 'numero_oficio', 'folio')
+                                        ->where('numero_oficio', 'LIKE', '%' . $this->search . '%')
                                         ->orWhere('folio', 'LIKE', '%' . $this->search . '%');
                                 })
                                 ->orderBy($this->sort, $this->direction)
@@ -312,10 +314,12 @@ class Conclusiones extends Component
 
         }elseif(auth()->user()->hasRole(['Titular', 'Usuario', 'Oficialia de partes'])){
 
-            $conclusiones = Conclusion::with('creadoPor', 'actualizadoPor', 'entrada')
+            $conclusiones = Conclusion::select('id', 'entrada_id', 'comentario','created_at', 'updated_at', 'creado_por', 'actualizado_por', 'oficina_id')
+                                ->with('creadoPor:id,name', 'actualizadoPor:id,name', 'entrada:id,folio,numero_oficio')
                                 ->where('creado_por', auth()->user()->id)
                                 ->whereHas('entrada', function ($q){
-                                    $q->where('numero_oficio', 'LIKE', '%' . $this->search . '%')
+                                    $q->select('id', 'numero_oficio', 'folio')
+                                        ->where('numero_oficio', 'LIKE', '%' . $this->search . '%')
                                         ->orWhere('folio', 'LIKE', '%' . $this->search . '%');
                                 })
                                 ->orderBy($this->sort, $this->direction)

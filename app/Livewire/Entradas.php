@@ -310,7 +310,8 @@ class Entradas extends Component
 
         if(auth()->user()->hasRole('Administrador')){
 
-            $entradas = Entrada::with('creadoPor', 'actualizadoPor', 'origen', 'destino', 'asignadoA')
+            $entradas = Entrada::select('id', 'folio', 'numero_oficio', 'asunto', 'fecha_termino', 'destinatario', 'dependencia_id', 'creado_por', 'actualizado_por', 'created_at', 'updated_at')
+                                ->with('creadoPor', 'actualizadoPor', 'origen', 'destino', 'asignadoA')
                                 ->withCount(['seguimientos', 'conclusiones'])
                                 ->where('folio', 'LIKE', '%' . $this->search . '%')
                                 ->orWhere('asunto', 'LIKE', '%' . $this->search . '%')
@@ -320,7 +321,8 @@ class Entradas extends Component
 
         }elseif(auth()->user()->hasRole('Titular')){
 
-            $entradas = Entrada::with('creadoPor', 'actualizadoPor', 'origen', 'destino', 'asignadoA')
+            $entradas = Entrada::select('id', 'folio', 'numero_oficio', 'asunto', 'fecha_termino', 'destinatario', 'dependencia_id', 'creado_por', 'actualizado_por', 'created_at', 'updated_at')
+                                ->with('creadoPor', 'actualizadoPor', 'origen', 'destino', 'asignadoA')
                                 ->withCount(['seguimientos', 'conclusiones'])
                                 ->whereHas('asignadoA', function($q){
                                     return $q->where('user_id', auth()->id());
@@ -336,7 +338,8 @@ class Entradas extends Component
 
         }elseif(auth()->user()->hasRole('Usuario')){
 
-            $entradas = Entrada::with('creadoPor', 'actualizadoPor', 'origen', 'destino', 'asignadoA')
+            $entradas = Entrada::select('id', 'folio', 'numero_oficio', 'asunto', 'fecha_termino', 'destinatario', 'dependencia_id', 'creado_por', 'actualizado_por', 'created_at', 'updated_at')
+                                ->with('creadoPor', 'actualizadoPor', 'origen', 'destino', 'asignadoA')
                                 ->withCount(['seguimientos', 'conclusiones'])
                                 ->whereHas('asignadoA', function($q){
                                     return $q->where('user_id', auth()->id());
@@ -351,7 +354,8 @@ class Entradas extends Component
 
         }elseif(auth()->user()->hasRole(['Oficialia de partes'])){
 
-            $entradas = Entrada::with('creadoPor', 'actualizadoPor', 'origen', 'destino', 'asignadoA')
+            $entradas = Entrada::select('id', 'folio', 'numero_oficio', 'asunto', 'fecha_termino', 'destinatario', 'dependencia_id', 'creado_por', 'actualizado_por', 'created_at', 'updated_at')
+                                ->with('creadoPor', 'actualizadoPor', 'origen', 'destino', 'asignadoA')
                                 ->where('creado_por', auth()->id())
                                 ->where(function($q){
                                     $q->where('folio', 'LIKE', '%' . $this->search . '%')

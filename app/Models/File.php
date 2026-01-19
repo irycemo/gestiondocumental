@@ -33,9 +33,7 @@ class File extends Model
 
         }else{
 
-            return $this->archivos()->where('descripcion', 'documento_entrada')->latest()->first()
-                    ? Storage::disk('pdfs')->url($this->url)
-                    : null;
+            return Storage::disk('pdfs')->url($this->url);
 
         }
 

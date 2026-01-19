@@ -308,10 +308,12 @@ class Seguimientos extends Component
 
         if(auth()->user()->hasRole('Administrador')){
 
-            $seguimientos = Seguimiento::with('creadoPor', 'actualizadoPor', 'entrada')
+            $seguimientos = Seguimiento::select('id', 'comentario', 'entrada_id', 'creado_por', 'actualizado_por', 'created_at', 'updated_at', 'oficio_respuesta', 'fecha_respuesta')
+                                ->with('creadoPor:id,name', 'actualizadoPor:id,name', 'entrada:id,folio,numero_oficio')
                                 ->where('oficio_respuesta', 'LIKE', '%' . $this->search . '%')
                                 ->orWhereHas('entrada', function ($q){
-                                    $q->where('numero_oficio', 'LIKE', '%' . $this->search . '%')
+                                    $q->select('id', 'numero_oficio', 'folio')
+                                        ->where('numero_oficio', 'LIKE', '%' . $this->search . '%')
                                         ->orWhere('folio', 'LIKE', '%' . $this->search . '%');
                                 })
                                 ->orderBy($this->sort, $this->direction)
@@ -319,12 +321,14 @@ class Seguimientos extends Component
 
         }elseif(auth()->user()->hasRole(['Titular', 'Usuario'])){
 
-            $seguimientos = Seguimiento::with('creadoPor', 'actualizadoPor', 'entrada')
+            $seguimientos = Seguimiento::select('id', 'comentario', 'entrada_id', 'creado_por', 'actualizado_por', 'created_at', 'updated_at', 'oficio_respuesta', 'fecha_respuesta')
+                                ->with('creadoPor:id,name', 'actualizadoPor:id,name', 'entrada:id,folio,numero_oficio')
                                 ->where('creado_por', auth()->user()->id)
                                 ->where(function ($q){
                                     $q->where('oficio_respuesta', 'LIKE', '%' . $this->search . '%')
                                         ->orWhereHas('entrada', function ($q){
-                                            $q->where('numero_oficio', 'LIKE', '%' . $this->search . '%')
+                                            $q->select('id', 'numero_oficio', 'folio')
+                                                ->where('numero_oficio', 'LIKE', '%' . $this->search . '%')
                                                 ->orWhere('folio', 'LIKE', '%' . $this->search . '%');
                                         });
                                 })
