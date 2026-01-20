@@ -8,6 +8,7 @@ use Livewire\Component;
 use App\Models\Seguimiento;
 use Livewire\WithPagination;
 use App\Traits\ComponentesTrait;
+use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -262,6 +263,42 @@ class Seguimientos extends Component
         }
     }
 
+    #[Computed]
+    public function seguimientos(){
+
+        if(auth()->user()->hasRole('Administrador')){
+
+            return Seguimiento::select('id', 'comentario', 'entrada_id', 'creado_por', 'actualizado_por', 'created_at', 'updated_at', 'oficio_respuesta', 'fecha_respuesta')
+                                ->with('creadoPor:id,name', 'actualizadoPor:id,name', 'entrada:id,folio,numero_oficio')
+                                ->where('oficio_respuesta', 'LIKE', '%' . $this->search . '%')
+                                ->orWhereHas('entrada', function ($q){
+                                    $q->select('id', 'numero_oficio', 'folio')
+                                        ->where('numero_oficio', 'LIKE', '%' . $this->search . '%')
+                                        ->orWhere('folio', 'LIKE', '%' . $this->search . '%');
+                                })
+                                ->orderBy($this->sort, $this->direction)
+                                ->paginate($this->pagination);
+
+        }elseif(auth()->user()->hasRole(['Titular', 'Usuario'])){
+
+            return Seguimiento::select('id', 'comentario', 'entrada_id', 'creado_por', 'actualizado_por', 'created_at', 'updated_at', 'oficio_respuesta', 'fecha_respuesta')
+                                ->with('creadoPor:id,name', 'actualizadoPor:id,name', 'entrada:id,folio,numero_oficio')
+                                ->where('creado_por', auth()->user()->id)
+                                ->where(function ($q){
+                                    $q->where('oficio_respuesta', 'LIKE', '%' . $this->search . '%')
+                                        ->orWhereHas('entrada', function ($q){
+                                            $q->select('id', 'numero_oficio', 'folio')
+                                                ->where('numero_oficio', 'LIKE', '%' . $this->search . '%')
+                                                ->orWhere('folio', 'LIKE', '%' . $this->search . '%');
+                                        });
+                                })
+                                ->orderBy($this->sort, $this->direction)
+                                ->paginate($this->pagination);
+
+        }
+
+    }
+
     public function mount(){
 
         $this->crearModeloVacio();
@@ -305,40 +342,7 @@ class Seguimientos extends Component
 
     public function render()
     {
-
-        if(auth()->user()->hasRole('Administrador')){
-
-            $seguimientos = Seguimiento::select('id', 'comentario', 'entrada_id', 'creado_por', 'actualizado_por', 'created_at', 'updated_at', 'oficio_respuesta', 'fecha_respuesta')
-                                ->with('creadoPor:id,name', 'actualizadoPor:id,name', 'entrada:id,folio,numero_oficio')
-                                ->where('oficio_respuesta', 'LIKE', '%' . $this->search . '%')
-                                ->orWhereHas('entrada', function ($q){
-                                    $q->select('id', 'numero_oficio', 'folio')
-                                        ->where('numero_oficio', 'LIKE', '%' . $this->search . '%')
-                                        ->orWhere('folio', 'LIKE', '%' . $this->search . '%');
-                                })
-                                ->orderBy($this->sort, $this->direction)
-                                ->paginate($this->pagination);
-
-        }elseif(auth()->user()->hasRole(['Titular', 'Usuario'])){
-
-            $seguimientos = Seguimiento::select('id', 'comentario', 'entrada_id', 'creado_por', 'actualizado_por', 'created_at', 'updated_at', 'oficio_respuesta', 'fecha_respuesta')
-                                ->with('creadoPor:id,name', 'actualizadoPor:id,name', 'entrada:id,folio,numero_oficio')
-                                ->where('creado_por', auth()->user()->id)
-                                ->where(function ($q){
-                                    $q->where('oficio_respuesta', 'LIKE', '%' . $this->search . '%')
-                                        ->orWhereHas('entrada', function ($q){
-                                            $q->select('id', 'numero_oficio', 'folio')
-                                                ->where('numero_oficio', 'LIKE', '%' . $this->search . '%')
-                                                ->orWhere('folio', 'LIKE', '%' . $this->search . '%');
-                                        });
-                                })
-                                ->orderBy($this->sort, $this->direction)
-                                ->paginate($this->pagination);
-
-        }
-
-        return view('livewire.seguimientos', compact('seguimientos'))->extends('layouts.admin');
-
+        return view('livewire.seguimientos')->extends('layouts.admin');
     }
 
 }

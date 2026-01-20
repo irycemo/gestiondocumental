@@ -1,6 +1,6 @@
 <div class="">
 
-    <div class="mb-6">
+    <div class="mb-5">
 
         <x-header>Oficinas</x-header>
 
@@ -54,82 +54,101 @@
 
             <x-slot name="body">
 
-                @forelse ($oficinas as $oficina)
+                @forelse ($this->oficinas as $oficina)
 
                     <x-table.row wire:loading.class.delaylongest="opacity-50" wire:key="row-{{ $oficina->id }}">
 
                         <x-table.cell>
 
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Nombre</span>
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Nombre</span>
 
-                            {{ $oficina->name }}
-
-                        </x-table.cell>
-
-                        <x-table.cell>
-
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Titular</span>
-
-                            {{ $oficina->uTitular ? $oficina->uTitular->name : 'N/A' }}
+                            <p class="mt-2">{{ $oficina->name }}</p>
 
                         </x-table.cell>
 
                         <x-table.cell>
 
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Registrado</span>
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Titular</span>
 
-
-                            <span class="font-semibold">@if($oficina->creadoPor != null)Registrado por: {{$oficina->creadoPor->name}} @else Registro: @endif</span> <br>
-
-                            {{ $oficina->created_at }}
+                            <p class="mt-2">{{ $oficina->uTitular ? $oficina->uTitular->name : 'N/A' }}</p>
 
                         </x-table.cell>
 
                         <x-table.cell>
 
-                            <span class="font-semibold">@if($oficina->actualizadoPor != null)Actualizado por: {{$oficina->actualizadoPor->name}} @else Actualizado: @endif</span> <br>
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Registrado</span>
 
-                            {{ $oficina->updated_at }}
+                            <p class="mt-2">
+
+                                <span class="font-semibold">@if($oficina->creadoPor != null)Registrado por: {{$oficina->creadoPor->name}} @else Registro: @endif</span> <br>
+
+                                {{ $oficina->created_at }}
+
+                            </p>
 
                         </x-table.cell>
 
                         <x-table.cell>
 
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Acciones</span>
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Actualizado</span>
 
-                            <div class="flex justify-center lg:justify-start gap-2">
+                            <p class="mt-2">
 
-                                @can('Editar oficina')
+                                <span class="font-semibold">@if($oficina->actualizadoPor != null)Actualizado por: {{$oficina->actualizadoPor->name}} @else Actualizado: @endif</span> <br>
 
-                                    <x-button-blue
-                                        wire:click="abrirModalEditar({{ $oficina->id }})"
-                                        wire:loading.attr="disabled"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4 mr-2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                {{ $oficina->updated_at }}
+
+                            </p>
+
+                        </x-table.cell>
+
+                        <x-table.cell>
+
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Acciones</span>
+
+                            <div class="ml-3 relative" x-data="{ open_drop_down:false }">
+
+                                <div>
+
+                                    <button x-on:click="open_drop_down=true" type="button" class="rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
                                         </svg>
 
-                                        <span>Editar</span>
+                                    </button>
 
-                                    </x-button-blue>
+                                </div>
 
-                                @endcan
+                                <div x-cloak x-show="open_drop_down" x-on:click="open_drop_down=false" x-on:click.away="open_drop_down=false" class="z-50 origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu">
 
-                                @can('Borrar oficina')
+                                    @can('Editar oficina')
 
-                                    <x-button-red
-                                        wire:click="abrirModalBorrar({{ $oficina->id }})"
-                                        wire:loading.attr="disabled"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4 mr-2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
+                                        <button
+                                            wire:click="abrirModalEditar({{ $oficina->id }})"
+                                            wire:target="abrirModalEditar({{ $oficina->id }})"
+                                            wire:loading.attr="disabled"
+                                            class="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
+                                            role="menuitem">
+                                            Editar
+                                        </button>
 
-                                        <span>Eliminar</span>
+                                    @endcan
 
-                                    </x-button-red>
+                                    @can('Borrar oficina')
 
-                                @endcan
+                                        <button
+                                            wire:click="abrirModalBorrar({{ $oficina->id }})"
+                                            wire:target="abrirModalBorrar({{ $oficina->id }})"
+                                            wire:loading.attr="disabled"
+                                            class="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
+                                            role="menuitem">
+                                            Borrar
+                                        </button>
+
+                                    @endcan
+
+                                </div>
 
                             </div>
 
@@ -163,7 +182,7 @@
 
                     <x-table.cell colspan="9" class="bg-gray-50">
 
-                        {{ $oficinas->links()}}
+                        {{ $this->oficinas->links()}}
 
                     </x-table.cell>
 

@@ -1,6 +1,6 @@
 <div class="">
 
-    <div class="mb-6">
+    <div class="mb-5">
 
         <x-header>Conclusiones</x-header>
 
@@ -54,48 +54,57 @@
 
             <x-slot name="body">
 
-                @forelse ($conclusiones as $conclusion)
+                @forelse ($this->conclusiones as $conclusion)
 
                     <x-table.row wire:loading.class.delaylongest="opacity-50" wire:key="row-{{ $conclusion->id }}">
 
                         <x-table.cell>
 
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Entrada</span>
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Entrada</span>
 
-                            {{ $conclusion->entrada->folio }}-{{ $conclusion->entrada->numero_oficio }}
-
-                        </x-table.cell>
-
-                        <x-table.cell>
-
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Comentario</span>
-
-                            {!! $conclusion->comentario !!}
+                            <p class="mt-2">{{ $conclusion->entrada->folio }}-{{ $conclusion->entrada->numero_oficio }}</p>
 
                         </x-table.cell>
 
                         <x-table.cell>
 
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Registrado</span>
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Comentario</span>
 
-
-                            <span class="font-semibold">@if($conclusion->creadoPor != null)Registrado por: {{$conclusion->creadoPor->name}} @else Registro: @endif</span> <br>
-
-                            {{ $conclusion->created_at }}
+                            <p class="mt-2">{!! $conclusion->comentario !!}</p>
 
                         </x-table.cell>
 
                         <x-table.cell>
 
-                            <span class="font-semibold">@if($conclusion->actualizadoPor != null)Actualizado por: {{$conclusion->actualizadoPor->name}} @else Actualizado: @endif</span> <br>
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Registrado</span>
 
-                            {{ $conclusion->updated_at }}
+                            <p class="mt-2">
+
+                                <span class="font-semibold">@if($conclusion->creadoPor != null)Registrado por: {{$conclusion->creadoPor->name}} @else Registro: @endif</span> <br>
+
+                                {{ $conclusion->created_at }}
+
+                            </p>
 
                         </x-table.cell>
 
                         <x-table.cell>
 
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Acciones</span>
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Actualizado</span>
+
+                            <p class="mt-2">
+
+                                <span class="font-semibold">@if($conclusion->actualizadoPor != null)Actualizado por: {{$conclusion->actualizadoPor->name}} @else Actualizado: @endif</span> <br>
+
+                                {{ $conclusion->updated_at }}
+
+                            </p>
+
+                        </x-table.cell>
+
+                        <x-table.cell>
+
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Acciones</span>
 
                             <div class="ml-3 relative" x-data="{ open_drop_down:false }">
 
@@ -171,7 +180,7 @@
 
                     <x-table.cell colspan="9" class="bg-gray-50">
 
-                        {{ $conclusiones->links()}}
+                        {{ $this->conclusiones->links()}}
 
                     </x-table.cell>
 

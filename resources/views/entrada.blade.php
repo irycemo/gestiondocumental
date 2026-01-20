@@ -4,7 +4,7 @@
 
     <x-header>Entrada <span class="text-base">(Folio: {{ $entrada->folio }})</span></x-header>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-5">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-5 text-sm">
 
         <div class="bg-white rounded-xl grid grid-cols-1 lg:grid-cols-2 gap-3 p-4">
 
@@ -102,7 +102,7 @@
 
     <x-header>Seguimientos</x-header>
 
-    <div class="space-y-3">
+    <div class="space-y-3 text-sm">
 
         @foreach ($entrada->seguimientos as $seguimiento)
 
@@ -176,7 +176,7 @@
 
     <x-header class="mt-5">Conclusiones</x-header>
 
-    <div class="space-y-3">
+    <div class="space-y-3 text-sm">
 
         @foreach ($entrada->conclusiones as $conclusion)
 

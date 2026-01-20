@@ -6,7 +6,7 @@
 
 <div>
 
-    <div class="mb-6">
+    <div class="mb-5">
 
         <x-header>Entradas</x-header>
 
@@ -72,69 +72,81 @@
 
             <x-slot name="body">
 
-                @forelse ($entradas as $entrada)
+                @forelse ($this->entradas as $entrada)
 
                     <x-table.row wire:loading.class.delaylongest="opacity-50" wire:key="row-{{ $entrada->id }}">
 
                         <x-table.cell>
 
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Folio</span>
+                            <p class="mt-2">
 
-                            {{ $entrada->folio }}
+                                <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Folio</span>
 
-                        </x-table.cell>
+                                {{ $entrada->folio }}
 
-                        <x-table.cell>
-
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Número de oficio</span>
-
-                            {{ $entrada->numero_oficio }}
+                            </p>
 
                         </x-table.cell>
 
                         <x-table.cell>
 
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Asunto</span>
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Número de oficio</span>
 
-                            {!! $entrada->asunto !!}
-
-                        </x-table.cell>
-
-                        <x-table.cell>
-
-                            <span clss="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Origen</span>
-
-                            {{ $entrada->origen->name }}
+                            <p class="mt-2">{{ $entrada->numero_oficio }}</p>
 
                         </x-table.cell>
 
                         <x-table.cell>
 
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Destinatario</span>
+                            <p class="mt-2">
 
-                            {{ $entrada->destino->name }}
+                                <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Asunto</span>
+
+                                {!! $entrada->asunto !!}
+
+                            </p>
 
                         </x-table.cell>
 
                         <x-table.cell>
 
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Asgignado a</span>
+                            <span clss="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Origen</span>
 
-                            <ul class="list-disc">
+                            <p class="mt-2">{{ $entrada->origen->name }}</p>
 
-                                @foreach ($entrada->asignadoA as $asignado)
+                        </x-table.cell>
 
-                                <li>
+                        <x-table.cell>
 
-                                    <div class="flex space-x-3 items-center">
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Destinatario</span>
 
-                                        {{ $asignado->name }}
+                            <p class="mt-2">{{ $entrada->destino->name }}</p>
 
-                                    </div>
+                        </x-table.cell>
 
-                                </li>
+                        <x-table.cell>
 
-                                @endforeach
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Asgignado a</span>
+
+                            <ul class="list-disc px-4">
+
+                                <p class="mt-2">
+
+                                    @foreach ($entrada->asignadoA as $asignado)
+
+                                        <li>
+
+                                            <div class="flex space-x-3 items-center">
+
+                                                {{ $asignado->name }}
+
+                                            </div>
+
+                                        </li>
+
+                                    @endforeach
+
+                                </p>
 
                             </ul>
 
@@ -144,31 +156,39 @@
 
                             <x-table.cell>
 
-                                <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Fecha de termino</span>
+                                <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Fecha de termino</span>
 
-                                @if( now()->diffInDays($entrada->fecha_termino) <= 5 )
-                                    <span class="bg-red-500 text-white px-2 py-1 rounded-full text-xs whitespace-nowrap">{{ $entrada->fecha_termino->format('d-m-Y') }}</span>
-                                @elseif( now() > $entrada->fecha_termino)
-                                    <span class="bg-gray-500 text-white px-2 py-1 rounded-full text-xs whitespace-nowrap">{{ $entrada->fecha_termino->format('d-m-Y') }}</span>
-                                @elseif( now()->diffInDays($entrada->fecha_termino) <= 15 )
-                                    <span class="bg-yellow-500 text-white px-2 py-1 rounded-full text-xs whitespace-nowrap">{{ $entrada->fecha_termino->format('d-m-Y') }}</span>
-                                @elseif( now()->diffInDays($entrada->fecha_termino) > 15 )
-                                    <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs whitespace-nowrap">{{ $entrada->fecha_termino->format('d-m-Y') }}</span>
-                                @endif
+                                <p class="mt-2">
+
+                                    @if( now()->diffInDays($entrada->fecha_termino) <= 5 )
+                                        <span class="bg-red-500 text-white px-2 py-1 rounded-full text-xs whitespace-nowrap">{{ $entrada->fecha_termino->format('d-m-Y') }}</span>
+                                    @elseif( now() > $entrada->fecha_termino)
+                                        <span class="bg-gray-500 text-white px-2 py-1 rounded-full text-xs whitespace-nowrap">{{ $entrada->fecha_termino->format('d-m-Y') }}</span>
+                                    @elseif( now()->diffInDays($entrada->fecha_termino) <= 15 )
+                                        <span class="bg-yellow-500 text-white px-2 py-1 rounded-full text-xs whitespace-nowrap">{{ $entrada->fecha_termino->format('d-m-Y') }}</span>
+                                    @elseif( now()->diffInDays($entrada->fecha_termino) > 15 )
+                                        <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs whitespace-nowrap">{{ $entrada->fecha_termino->format('d-m-Y') }}</span>
+                                    @endif
+
+                                </p>
 
                             </x-table.cell>
 
                             <x-table.cell>
 
-                                <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Estado</span>
+                                <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Estado</span>
 
-                                @if($entrada->seguimientos_count == 0 && $entrada->conclusiones_count == 0)
-                                    <span class="bg-blue-500 text-white px-2 py-1 rounded-full text-xs">Nueva</span>
-                                @elseif($entrada->seguimientos_count != 0 && $entrada->conclusiones_count == 0)
-                                    <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs">Seguimiento</span>
-                                @elseif($entrada->seguimientos_count != 0 || $entrada->conclusiones_count != 0)
-                                    <span class="bg-gray-500 text-white px-2 py-1 rounded-full text-xs">Concluida</span>
-                                @endif
+                                <p class="mt-2">
+
+                                    @if($entrada->seguimientos_count == 0 && $entrada->conclusiones_count == 0)
+                                        <span class="bg-blue-500 text-white px-2 py-1 rounded-full text-xs">Nueva</span>
+                                    @elseif($entrada->seguimientos_count != 0 && $entrada->conclusiones_count == 0)
+                                        <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs">Seguimiento</span>
+                                    @elseif($entrada->seguimientos_count != 0 || $entrada->conclusiones_count != 0)
+                                        <span class="bg-gray-500 text-white px-2 py-1 rounded-full text-xs">Concluida</span>
+                                    @endif
+
+                                </p>
 
                             </x-table.cell>
 
@@ -176,26 +196,35 @@
 
                         <x-table.cell>
 
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Registrado</span>
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Registrado</span>
 
+                            <p class="mt-2">
 
-                            <span class="font-semibold">@if($entrada->creadoPor != null)Registrado por: {{$entrada->creadoPor->name}} @else Registro: @endif</span> <br>
+                                <span class="font-semibold">@if($entrada->creadoPor != null)Registrado por: {{$entrada->creadoPor->name}} @else Registro: @endif</span> <br>
 
-                            {{ $entrada->created_at }}
+                                {{ $entrada->created_at }}
 
-                        </x-table.cell>
-
-                        <x-table.cell>
-
-                            <span class="font-semibold">@if($entrada->actualizadoPor != null)Actualizado por: {{$entrada->actualizadoPor->name}} @else Actualizado: @endif</span> <br>
-
-                            {{ $entrada->updated_at }}
+                            </p>
 
                         </x-table.cell>
 
                         <x-table.cell>
 
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Acciones</span>
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Actualizado</span>
+
+                            <p class="mt-2">
+
+                                <span class="font-semibold">@if($entrada->actualizadoPor != null)Actualizado por: {{$entrada->actualizadoPor->name}} @else Actualizado: @endif</span> <br>
+
+                                {{ $entrada->updated_at }}
+
+                            </p>
+
+                        </x-table.cell>
+
+                        <x-table.cell>
+
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Acciones</span>
 
                             <div class="ml-3 relative" x-data="{ open_drop_down:false }">
 
@@ -282,7 +311,7 @@
 
                     <x-table.cell colspan="11" class="bg-gray-50">
 
-                        {{ $entradas->links()}}
+                        {{ $this->entradas->links()}}
 
                     </x-table.cell>
 

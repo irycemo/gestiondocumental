@@ -7,6 +7,7 @@ use App\Models\Oficina;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Traits\ComponentesTrait;
+use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\Log;
 
 class Oficinas extends Component
@@ -113,29 +114,34 @@ class Oficinas extends Component
 
     }
 
+    #[Computed]
+    public function oficinas(){
+
+        return Oficina::select('id', 'name', 'titular', 'creado_por', 'actualizado_por', 'created_at', 'updated_at')
+                        ->with('creadoPor:id,name', 'actualizadoPor:id,name', 'uTitular:id,name')
+                        ->where('name', 'LIKE', '%' . $this->search . '%')
+                        ->orWhereHas('uTitular', function($q){
+                            $q->where('name', 'LIKE', '%' . $this->search . '%');
+                        })
+                        ->orderBy($this->sort, $this->direction)
+                        ->paginate($this->pagination);
+
+    }
+
     public function mount(){
 
         $this->crearModeloVacio();
 
-        $this->titulares = User::whereHas('roles', function($q){
-            $q->where('name', 'Titular');
-        })->get();
+        $this->titulares = User::select('id', 'name')
+                                    ->whereHas('roles', function($q){
+                                        $q->where('name', 'Titular');
+                                    })->get();
 
     }
 
     public function render()
     {
-
-        $oficinas = Oficina::with('creadoPor', 'actualizadoPor', 'uTitular')
-                                ->where('name', 'LIKE', '%' . $this->search . '%')
-                                ->orWhereHas('uTitular', function($q){
-                                    $q->where('name', 'LIKE', '%' . $this->search . '%');
-                                })
-                                ->orderBy($this->sort, $this->direction)
-                                ->paginate($this->pagination);
-
-        return view('livewire.admin.oficinas', compact('oficinas'))->extends('layouts.admin');
-
+        return view('livewire.admin.oficinas')->extends('layouts.admin');
     }
 
 }

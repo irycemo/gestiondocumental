@@ -1,6 +1,6 @@
 <div class="">
 
-    <div class="mb-6">
+    <div class="mb-5">
 
         <x-header>Usuarios</x-header>
 
@@ -57,55 +57,63 @@
 
             <x-slot name="body">
 
-                @forelse ($usuarios as $usuario)
+                @forelse ($this->usuarios as $usuario)
 
                     <x-table.row wire:loading.class.delaylongest="opacity-50" wire:key="row-{{ $usuario->id }}">
 
                         <x-table.cell>
 
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Nombre</span>
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Nombre</span>
 
-                            <div class="flex items-center justify-center lg:justify-start">
+                            <p class="mt-2">
 
-                                <img class="h-10 w-10 rounded-full" src="{{ $usuario->profile_photo_url }}" alt="{{ $usuario->name }}">
+                                <div class="flex items-center justify-center lg:justify-start">
 
-                                <span class="text-sm text-gray-900 ml-4">{{ $usuario->name }}</span>
+                                    <img class="h-10 w-10 rounded-full" src="{{ $usuario->profile_photo_url }}" alt="{{ $usuario->name }}">
 
-                            </div>
+                                    <span class="text-sm text-gray-900 ml-4">{{ $usuario->name }}</span>
 
-                        </x-table.cell>
+                                </div>
 
-                        <x-table.cell>
-
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Email</span>
-
-                            {{ $usuario->email }}
+                            </p>
 
                         </x-table.cell>
 
                         <x-table.cell>
 
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Role</span>
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Email</span>
 
-                            @if ($usuario->roles()->count())
-
-                                {{ $usuario->getRoleNames()->first() }}
-
-                            @endif
+                            <p class="mt-2">{{ $usuario->email }}</p>
 
                         </x-table.cell>
 
                         <x-table.cell>
 
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Oficina</span>
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Role</span>
 
-                            {{ $usuario->oficina->name }}
+                            <p class="mt-2">
+
+                                @if ($usuario->roles()->count())
+
+                                    {{ $usuario->getRoleNames()->first() }}
+
+                                @endif
+
+                            </p>
 
                         </x-table.cell>
 
                         <x-table.cell>
 
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Status</span>
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Oficina</span>
+
+                            <p class="mt-2">{{ $usuario->oficina->name }}</p>
+
+                        </x-table.cell>
+
+                        <x-table.cell>
+
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Status</span>
 
                             @if($usuario->status == 'activo')
 
@@ -121,62 +129,79 @@
 
                         <x-table.cell>
 
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Registrado</span>
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Registrado</span>
 
+                            <p class="mt-2">
 
-                            <span class="font-semibold">@if($usuario->creadoPor != null)Registrado por: {{$usuario->creadoPor->name}} @else Registro: @endif</span> <br>
+                                <span class="font-semibold">@if($usuario->creadoPor != null)Registrado por: {{$usuario->creadoPor->name}} @else Registro: @endif</span> <br>
 
-                            {{ $usuario->created_at }}
+                                {{ $usuario->created_at }}
 
-                        </x-table.cell>
-
-                        <x-table.cell>
-
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Actualizado</span>
-
-                            <span class="font-semibold">@if($usuario->actualizadoPor != null)Actualizado por: {{$usuario->actualizadoPor->name}} @else Actualizado: @endif</span> <br>
-
-                            {{ $usuario->updated_at }}
+                            </p>
 
                         </x-table.cell>
 
                         <x-table.cell>
 
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Acciones</span>
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Actualizado</span>
 
-                            <div class="flex md:flex-col justify-center lg:justify-start gap-2">
+                            <p class="mt-2">
 
-                                @can('Editar usuario')
+                                <span class="font-semibold">@if($usuario->actualizadoPor != null)Actualizado por: {{$usuario->actualizadoPor->name}} @else Actualizado: @endif</span> <br>
 
-                                    <x-button-blue
-                                        wire:click="abrirModalEditar({{ $usuario->id }})"
-                                        wire:loading.attr="disabled"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4 mr-2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                {{ $usuario->updated_at }}
+
+                            </p>
+
+                        </x-table.cell>
+
+                        <x-table.cell>
+
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Acciones</span>
+
+                            <div class="ml-3 relative" x-data="{ open_drop_down:false }">
+
+                                <div>
+
+                                    <button x-on:click="open_drop_down=true" type="button" class="rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
                                         </svg>
 
-                                        <span>Editar</span>
+                                    </button>
 
-                                    </x-button-blue>
+                                </div>
 
-                                @endcan
+                                <div x-cloak x-show="open_drop_down" x-on:click="open_drop_down=false" x-on:click.away="open_drop_down=false" class="z-50 origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu">
 
-                                @can('Borrar usuario')
+                                    @can('Editar usuario')
 
-                                    <x-button-red
-                                        wire:click="abrirModalBorrar({{ $usuario->id }})"
-                                        wire:loading.attr="disabled"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4 mr-2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
+                                        <button
+                                            wire:click="abrirModalEditar({{ $usuario->id }})"
+                                            wire:target="abrirModalEditar({{ $usuario->id }})"
+                                            wire:loading.attr="disabled"
+                                            class="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
+                                            role="menuitem">
+                                            Editar
+                                        </button>
 
-                                        <span>Eliminar</span>
+                                    @endcan
 
-                                    </x-button-red>
+                                    @can('Borrar usuario')
 
-                                @endcan
+                                        <button
+                                            wire:click="abrirModalBorrar({{ $usuario->id }})"
+                                            wire:target="abrirModalBorrar({{ $usuario->id }})"
+                                            wire:loading.attr="disabled"
+                                            class="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
+                                            role="menuitem">
+                                            Borrar
+                                        </button>
+
+                                    @endcan
+
+                                </div>
 
                             </div>
 
@@ -210,7 +235,7 @@
 
                     <x-table.cell colspan="9" class="bg-gray-50">
 
-                        {{ $usuarios->links()}}
+                        {{ $this->usuarios->links()}}
 
                     </x-table.cell>
 

@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\Dependencia;
 use Livewire\WithPagination;
 use App\Traits\ComponentesTrait;
+use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\Log;
 
 class Dependencias extends Component
@@ -87,6 +88,17 @@ class Dependencias extends Component
 
     }
 
+    #[Computed]
+    public function dependencias(){
+
+        return Dependencia::select('id', 'name', 'creado_por', 'actualizado_por', 'created_at', 'updated_at')
+                            ->with('creadoPor:id,name', 'actualizadoPor:id,name')
+                            ->where('name', 'LIKE', '%' . $this->search . '%')
+                            ->orderBy($this->sort, $this->direction)
+                            ->paginate($this->pagination);
+
+    }
+
     public function borrar(){
 
         try{
@@ -111,14 +123,7 @@ class Dependencias extends Component
 
     public function render()
     {
-
-        $dependencias = Dependencia::with('creadoPor', 'actualizadoPor')
-                                ->where('name', 'LIKE', '%' . $this->search . '%')
-                                ->orderBy($this->sort, $this->direction)
-                                ->paginate($this->pagination);
-
-        return view('livewire.dependencias', compact('dependencias'))->extends('layouts.admin');
-
+        return view('livewire.dependencias')->extends('layouts.admin');
     }
 
 }

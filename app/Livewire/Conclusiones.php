@@ -8,6 +8,7 @@ use Livewire\Component;
 use App\Models\Conclusion;
 use Livewire\WithPagination;
 use App\Traits\ComponentesTrait;
+use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -257,6 +258,38 @@ class Conclusiones extends Component
         }
     }
 
+    #[Computed]
+    public function conclusiones(){
+
+        if(auth()->user()->hasRole('Administrador')){
+
+            return Conclusion::select('id', 'entrada_id', 'comentario','created_at', 'updated_at', 'creado_por', 'actualizado_por', 'oficina_id')
+                                ->with('creadoPor:id,name', 'actualizadoPor:id,name', 'entrada:id,folio,numero_oficio')
+                                ->orWhereHas('entrada', function ($q){
+                                    $q->select('id', 'numero_oficio', 'folio')
+                                        ->where('numero_oficio', 'LIKE', '%' . $this->search . '%')
+                                        ->orWhere('folio', 'LIKE', '%' . $this->search . '%');
+                                })
+                                ->orderBy($this->sort, $this->direction)
+                                ->paginate($this->pagination);
+
+        }elseif(auth()->user()->hasRole(['Titular', 'Usuario', 'Oficialia de partes'])){
+
+            return Conclusion::select('id', 'entrada_id', 'comentario','created_at', 'updated_at', 'creado_por', 'actualizado_por', 'oficina_id')
+                                ->with('creadoPor:id,name', 'actualizadoPor:id,name', 'entrada:id,folio,numero_oficio')
+                                ->where('creado_por', auth()->user()->id)
+                                ->whereHas('entrada', function ($q){
+                                    $q->select('id', 'numero_oficio', 'folio')
+                                        ->where('numero_oficio', 'LIKE', '%' . $this->search . '%')
+                                        ->orWhere('folio', 'LIKE', '%' . $this->search . '%');
+                                })
+                                ->orderBy($this->sort, $this->direction)
+                                ->paginate($this->pagination);
+
+        }
+
+    }
+
     public function mount(){
 
         $this->crearModeloVacio();
@@ -299,34 +332,6 @@ class Conclusiones extends Component
 
     public function render()
     {
-
-        if(auth()->user()->hasRole('Administrador')){
-
-            $conclusiones = Conclusion::select('id', 'entrada_id', 'comentario','created_at', 'updated_at', 'creado_por', 'actualizado_por', 'oficina_id')
-                                ->with('creadoPor:id,name', 'actualizadoPor:id,name', 'entrada:id,folio,numero_oficio')
-                                ->orWhereHas('entrada', function ($q){
-                                    $q->select('id', 'numero_oficio', 'folio')
-                                        ->where('numero_oficio', 'LIKE', '%' . $this->search . '%')
-                                        ->orWhere('folio', 'LIKE', '%' . $this->search . '%');
-                                })
-                                ->orderBy($this->sort, $this->direction)
-                                ->paginate($this->pagination);
-
-        }elseif(auth()->user()->hasRole(['Titular', 'Usuario', 'Oficialia de partes'])){
-
-            $conclusiones = Conclusion::select('id', 'entrada_id', 'comentario','created_at', 'updated_at', 'creado_por', 'actualizado_por', 'oficina_id')
-                                ->with('creadoPor:id,name', 'actualizadoPor:id,name', 'entrada:id,folio,numero_oficio')
-                                ->where('creado_por', auth()->user()->id)
-                                ->whereHas('entrada', function ($q){
-                                    $q->select('id', 'numero_oficio', 'folio')
-                                        ->where('numero_oficio', 'LIKE', '%' . $this->search . '%')
-                                        ->orWhere('folio', 'LIKE', '%' . $this->search . '%');
-                                })
-                                ->orderBy($this->sort, $this->direction)
-                                ->paginate($this->pagination);
-
-        }
-
-        return view('livewire.conclusiones', compact('conclusiones'))->extends('layouts.admin');
+        return view('livewire.conclusiones')->extends('layouts.admin');
     }
 }

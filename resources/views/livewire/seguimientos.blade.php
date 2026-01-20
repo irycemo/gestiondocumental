@@ -1,6 +1,6 @@
 <div class="">
 
-    <div class="mb-6">
+    <div class="mb-5">
 
         <x-header>Seguimientos</x-header>
 
@@ -56,64 +56,73 @@
 
             <x-slot name="body">
 
-                @forelse ($seguimientos as $seguimineto)
+                @forelse ($this->seguimientos as $seguimineto)
 
                     <x-table.row wire:loading.class.delaylongest="opacity-50" wire:key="row-{{ $seguimineto->id }}">
 
                         <x-table.cell>
 
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Oficio de respuesta</span>
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Oficio de respuesta</span>
 
-                            {{ $seguimineto->oficio_respuesta }}
-
-                        </x-table.cell>
-
-                        <x-table.cell>
-
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Fecha de respuesta</span>
-
-                            {{ $seguimineto->fecha_respuesta->format('d-m-Y') }}
+                            <p class="mt-2">{{ $seguimineto->oficio_respuesta }}</p>
 
                         </x-table.cell>
 
                         <x-table.cell>
 
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Entrada</span>
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Fecha de respuesta</span>
 
-                            {{ $seguimineto->entrada->folio }}-{{ $seguimineto->entrada->numero_oficio }}
-
-                        </x-table.cell>
-
-                        <x-table.cell>
-
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Comentario</span>
-
-                            {!! $seguimineto->comentario !!}
+                            <p class="mt-2">{{ $seguimineto->fecha_respuesta->format('d-m-Y') }}</p>
 
                         </x-table.cell>
 
                         <x-table.cell>
 
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Registrado</span>
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Entrada</span>
 
-
-                            <span class="font-semibold">@if($seguimineto->creadoPor != null)Registrado por: {{$seguimineto->creadoPor->name}} @else Registro: @endif</span> <br>
-
-                            {{ $seguimineto->created_at }}
+                            <p class="mt-2"> {{ $seguimineto->entrada->folio }}-{{ $seguimineto->entrada->numero_oficio }}</p>
 
                         </x-table.cell>
 
                         <x-table.cell>
 
-                            <span class="font-semibold">@if($seguimineto->actualizadoPor != null)Actualizado por: {{$seguimineto->actualizadoPor->name}} @else Actualizado: @endif</span> <br>
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Comentario</span>
 
-                            {{ $seguimineto->updated_at }}
+                            <p class="mt-2">{!! $seguimineto->comentario !!}</p>
 
                         </x-table.cell>
 
                         <x-table.cell>
 
-                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 py-1 text-xs text-white font-bold uppercase rounded-br-xl">Acciones</span>
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Registrado</span>
+
+                            <p class="mt-2">
+
+                                <span class="font-semibold">@if($seguimineto->creadoPor != null)Registrado por: {{$seguimineto->creadoPor->name}} @else Registro: @endif</span> <br>
+
+                                {{ $seguimineto->created_at }}
+
+                            </p>
+
+                        </x-table.cell>
+
+                        <x-table.cell>
+
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Actualizado</span>
+
+                            <p class="mt-2">
+
+                                <span class="font-semibold">@if($seguimineto->actualizadoPor != null)Actualizado por: {{$seguimineto->actualizadoPor->name}} @else Actualizado: @endif</span> <br>
+
+                                {{ $seguimineto->updated_at }}
+
+                            </p>
+
+                        </x-table.cell>
+
+                        <x-table.cell>
+
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Acciones</span>
 
                             <div class="ml-3 relative" x-data="{ open_drop_down:false }">
 
@@ -189,7 +198,7 @@
 
                     <x-table.cell colspan="9" class="bg-gray-50">
 
-                        {{ $seguimientos->links()}}
+                        {{ $this->seguimientos->links()}}
 
                     </x-table.cell>
 

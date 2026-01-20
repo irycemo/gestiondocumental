@@ -11,6 +11,7 @@ use App\Models\Dependencia;
 use Livewire\WithPagination;
 use App\Jobs\NotificacionesJob;
 use App\Traits\ComponentesTrait;
+use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -283,6 +284,70 @@ class Entradas extends Component
         }
     }
 
+    #[Computed]
+    public function entradas(){
+
+        if(auth()->user()->hasRole('Administrador')){
+
+            return Entrada::select('id', 'folio', 'numero_oficio', 'asunto', 'fecha_termino', 'destinatario', 'dependencia_id', 'creado_por', 'actualizado_por', 'created_at', 'updated_at')
+                                ->with('creadoPor:id,name', 'actualizadoPor:id,name', 'origen:id,name', 'destino:id,name', 'asignadoA:id,name')
+                                ->withCount(['seguimientos', 'conclusiones'])
+                                ->where('folio', 'LIKE', '%' . $this->search . '%')
+                                ->orWhere('asunto', 'LIKE', '%' . $this->search . '%')
+                                ->orWhere('numero_oficio', 'LIKE', '%' . $this->search . '%')
+                                ->orderBy($this->sort, $this->direction)
+                                ->paginate($this->pagination);
+
+        }elseif(auth()->user()->hasRole('Titular')){
+
+            return Entrada::select('id', 'folio', 'numero_oficio', 'asunto', 'fecha_termino', 'destinatario', 'dependencia_id', 'creado_por', 'actualizado_por', 'created_at', 'updated_at')
+                                ->with('creadoPor:id,name', 'actualizadoPor:id,name', 'origen:id,name', 'destino:id,name', 'asignadoA:id,name')
+                                ->withCount(['seguimientos', 'conclusiones'])
+                                ->whereHas('asignadoA', function($q){
+                                    return $q->where('user_id', auth()->id());
+                                })
+                                ->where(function($q){
+                                    $q->where('folio', 'LIKE', '%' . $this->search . '%')
+                                        ->orWhere('asunto', 'LIKE', '%' . $this->search . '%')
+                                        ->orWhere('numero_oficio', 'LIKE', '%' . $this->search . '%');
+                                })
+                                ->orWhere('creado_por', auth()->id())
+                                ->orderBy($this->sort, $this->direction)
+                                ->paginate($this->pagination);
+
+        }elseif(auth()->user()->hasRole('Usuario')){
+
+            return Entrada::select('id', 'folio', 'numero_oficio', 'asunto', 'fecha_termino', 'destinatario', 'dependencia_id', 'creado_por', 'actualizado_por', 'created_at', 'updated_at')
+                                ->with('creadoPor:id,name', 'actualizadoPor:id,name', 'origen:id,name', 'destino:id,name', 'asignadoA:id,name')
+                                ->withCount(['seguimientos', 'conclusiones'])
+                                ->whereHas('asignadoA', function($q){
+                                    return $q->where('user_id', auth()->id());
+                                })
+                                ->where(function($q){
+                                    $q->where('folio', 'LIKE', '%' . $this->search . '%')
+                                        ->orWhere('asunto', 'LIKE', '%' . $this->search . '%')
+                                        ->orWhere('numero_oficio', 'LIKE', '%' . $this->search . '%');
+                                })
+                                ->orderBy($this->sort, $this->direction)
+                                ->paginate($this->pagination);
+
+        }elseif(auth()->user()->hasRole(['Oficialia de partes'])){
+
+            return Entrada::select('id', 'folio', 'numero_oficio', 'asunto', 'fecha_termino', 'destinatario', 'dependencia_id', 'creado_por', 'actualizado_por', 'created_at', 'updated_at')
+                                ->with('creadoPor:id,name', 'actualizadoPor:id,name', 'origen:id,name', 'destino:id,name', 'asignadoA:id,name')
+                                ->where('creado_por', auth()->id())
+                                ->where(function($q){
+                                    $q->where('folio', 'LIKE', '%' . $this->search . '%')
+                                        ->orWhere('asunto', 'LIKE', '%' . $this->search . '%')
+                                        ->orWhere('numero_oficio', 'LIKE', '%' . $this->search . '%');
+                                })
+                                ->orderBy($this->sort, $this->direction)
+                                ->paginate($this->pagination);
+
+        }
+
+    }
+
     public function mount(){
 
         $this->crearModeloVacio();
@@ -307,68 +372,7 @@ class Entradas extends Component
 
     public function render()
     {
-
-        if(auth()->user()->hasRole('Administrador')){
-
-            $entradas = Entrada::select('id', 'folio', 'numero_oficio', 'asunto', 'fecha_termino', 'destinatario', 'dependencia_id', 'creado_por', 'actualizado_por', 'created_at', 'updated_at')
-                                ->with('creadoPor', 'actualizadoPor', 'origen', 'destino', 'asignadoA')
-                                ->withCount(['seguimientos', 'conclusiones'])
-                                ->where('folio', 'LIKE', '%' . $this->search . '%')
-                                ->orWhere('asunto', 'LIKE', '%' . $this->search . '%')
-                                ->orWhere('numero_oficio', 'LIKE', '%' . $this->search . '%')
-                                ->orderBy($this->sort, $this->direction)
-                                ->paginate($this->pagination);
-
-        }elseif(auth()->user()->hasRole('Titular')){
-
-            $entradas = Entrada::select('id', 'folio', 'numero_oficio', 'asunto', 'fecha_termino', 'destinatario', 'dependencia_id', 'creado_por', 'actualizado_por', 'created_at', 'updated_at')
-                                ->with('creadoPor', 'actualizadoPor', 'origen', 'destino', 'asignadoA')
-                                ->withCount(['seguimientos', 'conclusiones'])
-                                ->whereHas('asignadoA', function($q){
-                                    return $q->where('user_id', auth()->id());
-                                })
-                                ->where(function($q){
-                                    $q->where('folio', 'LIKE', '%' . $this->search . '%')
-                                        ->orWhere('asunto', 'LIKE', '%' . $this->search . '%')
-                                        ->orWhere('numero_oficio', 'LIKE', '%' . $this->search . '%');
-                                })
-                                ->orWhere('creado_por', auth()->id())
-                                ->orderBy($this->sort, $this->direction)
-                                ->paginate($this->pagination);
-
-        }elseif(auth()->user()->hasRole('Usuario')){
-
-            $entradas = Entrada::select('id', 'folio', 'numero_oficio', 'asunto', 'fecha_termino', 'destinatario', 'dependencia_id', 'creado_por', 'actualizado_por', 'created_at', 'updated_at')
-                                ->with('creadoPor', 'actualizadoPor', 'origen', 'destino', 'asignadoA')
-                                ->withCount(['seguimientos', 'conclusiones'])
-                                ->whereHas('asignadoA', function($q){
-                                    return $q->where('user_id', auth()->id());
-                                })
-                                ->where(function($q){
-                                    $q->where('folio', 'LIKE', '%' . $this->search . '%')
-                                        ->orWhere('asunto', 'LIKE', '%' . $this->search . '%')
-                                        ->orWhere('numero_oficio', 'LIKE', '%' . $this->search . '%');
-                                })
-                                ->orderBy($this->sort, $this->direction)
-                                ->paginate($this->pagination);
-
-        }elseif(auth()->user()->hasRole(['Oficialia de partes'])){
-
-            $entradas = Entrada::select('id', 'folio', 'numero_oficio', 'asunto', 'fecha_termino', 'destinatario', 'dependencia_id', 'creado_por', 'actualizado_por', 'created_at', 'updated_at')
-                                ->with('creadoPor', 'actualizadoPor', 'origen', 'destino', 'asignadoA')
-                                ->where('creado_por', auth()->id())
-                                ->where(function($q){
-                                    $q->where('folio', 'LIKE', '%' . $this->search . '%')
-                                        ->orWhere('asunto', 'LIKE', '%' . $this->search . '%')
-                                        ->orWhere('numero_oficio', 'LIKE', '%' . $this->search . '%');
-                                })
-                                ->orderBy($this->sort, $this->direction)
-                                ->paginate($this->pagination);
-
-        }
-
-        return view('livewire.entradas', compact('entradas'))->extends('layouts.admin');
-
+        return view('livewire.entradas')->extends('layouts.admin');
     }
 
 }

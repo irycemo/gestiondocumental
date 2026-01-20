@@ -8,6 +8,7 @@ use App\Models\Oficina;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Traits\ComponentesTrait;
+use Livewire\Attributes\Computed;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -144,6 +145,25 @@ class Usuarios extends Component
 
     }
 
+    #[Computed]
+    public function usuarios(){
+
+        return User::select('id', 'name', 'email', 'oficina_id', 'status', 'creado_por', 'actualizado_por', 'created_at', 'updated_at', 'profile_photo_path')
+                    ->with('creadoPor:id,name', 'actualizadoPor:id,name', 'oficina:id,name')
+                    ->where('name', 'LIKE', '%' . $this->search . '%')
+                    ->orWhere('email', 'LIKE', '%' . $this->search . '%')
+                    ->orWhere('status', 'LIKE', '%' . $this->search . '%')
+                    ->orWhere(function($q){
+                        $q->whereHas('roles', function($q){
+                            $q->select('id', 'name')
+                                ->where('name', 'LIKE', '%' . $this->search . '%');
+                        });
+                    })
+                    ->orderBy($this->sort, $this->direction)
+                    ->paginate($this->pagination);
+
+    }
+
     public function mount(){
 
         $this->crearModeloVacio();
@@ -158,20 +178,7 @@ class Usuarios extends Component
 
     public function render()
     {
-
-        $usuarios = User::with('creadoPor', 'actualizadoPor', 'oficina')->where('name', 'LIKE', '%' . $this->search . '%')
-                            ->orWhere('email', 'LIKE', '%' . $this->search . '%')
-                            ->orWhere('status', 'LIKE', '%' . $this->search . '%')
-                            ->orWhere(function($q){
-                                return $q->whereHas('roles', function($q){
-                                    return $q->where('name', 'LIKE', '%' . $this->search . '%');
-                                });
-                            })
-                            ->orderBy($this->sort, $this->direction)
-                            ->paginate($this->pagination);
-
-        return view('livewire.admin.usuarios', compact('usuarios'))->extends('layouts.admin');
-
+        return view('livewire.admin.usuarios')->extends('layouts.admin');
     }
 
 }
