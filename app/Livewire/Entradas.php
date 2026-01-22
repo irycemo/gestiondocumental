@@ -29,6 +29,12 @@ class Entradas extends Component
     public $file_id;
     public $asignados = [];
 
+    public $filters = [
+        'origen' => '',
+        'destinatario' => '',
+        'asignado' => ''
+    ];
+
     public $oficinas;
     public $dependencias;
     public $usuarios;
@@ -292,9 +298,22 @@ class Entradas extends Component
             return Entrada::select('id', 'folio', 'numero_oficio', 'asunto', 'fecha_termino', 'destinatario', 'dependencia_id', 'creado_por', 'actualizado_por', 'created_at', 'updated_at')
                                 ->with('creadoPor:id,name', 'actualizadoPor:id,name', 'origen:id,name', 'destino:id,name', 'asignadoA:id,name')
                                 ->withCount(['seguimientos', 'conclusiones'])
-                                ->where('folio', 'LIKE', '%' . $this->search . '%')
-                                ->orWhere('asunto', 'LIKE', '%' . $this->search . '%')
-                                ->orWhere('numero_oficio', 'LIKE', '%' . $this->search . '%')
+                                ->where(function($q){
+                                    $q->where('folio', 'LIKE', '%' . $this->search . '%')
+                                        ->orWhere('asunto', 'LIKE', '%' . $this->search . '%')
+                                        ->orWhere('numero_oficio', 'LIKE', '%' . $this->search . '%');
+                                })
+                                ->when(strlen($this->filters['origen']) > 0, function($q){
+                                    $q->where('dependencia_id', $this->filters['origen']);
+                                })
+                                ->when(strlen($this->filters['destinatario']) > 0, function($q){
+                                    $q->where('destinatario', $this->filters['destinatario']);
+                                })
+                                ->when(strlen($this->filters['asignado']) > 0, function($q){
+                                    $q->whereHas('asignadoA', function($q){
+                                        $q->where('user_id', $this->filters['asignado']);
+                                    });
+                                })
                                 ->orderBy($this->sort, $this->direction)
                                 ->paginate($this->pagination);
 
@@ -309,9 +328,20 @@ class Entradas extends Component
                                 ->where(function($q){
                                     $q->where('folio', 'LIKE', '%' . $this->search . '%')
                                         ->orWhere('asunto', 'LIKE', '%' . $this->search . '%')
-                                        ->orWhere('numero_oficio', 'LIKE', '%' . $this->search . '%');
+                                        ->orWhere('numero_oficio', 'LIKE', '%' . $this->search . '%')
+                                        ->orWhere('creado_por', auth()->id());
                                 })
-                                ->orWhere('creado_por', auth()->id())
+                                ->when(strlen($this->filters['origen']) > 0, function($q){
+                                    $q->where('dependencia_id', $this->filters['origen']);
+                                })
+                                ->when(strlen($this->filters['destinatario']) > 0, function($q){
+                                    $q->where('destinatario', $this->filters['destinatario']);
+                                })
+                                ->when(strlen($this->filters['asignado']) > 0, function($q){
+                                    $q->whereHas('asignadoA', function($q){
+                                        $q->where('user_id', $this->filters['asignado']);
+                                    });
+                                })
                                 ->orderBy($this->sort, $this->direction)
                                 ->paginate($this->pagination);
 
@@ -328,6 +358,12 @@ class Entradas extends Component
                                         ->orWhere('asunto', 'LIKE', '%' . $this->search . '%')
                                         ->orWhere('numero_oficio', 'LIKE', '%' . $this->search . '%');
                                 })
+                                ->when(strlen($this->filters['origen']) > 0, function($q){
+                                    $q->where('dependencia_id', $this->filters['origen']);
+                                })
+                                ->when(strlen($this->filters['destinatario']) > 0, function($q){
+                                    $q->where('destinatario', $this->filters['destinatario']);
+                                })
                                 ->orderBy($this->sort, $this->direction)
                                 ->paginate($this->pagination);
 
@@ -340,6 +376,17 @@ class Entradas extends Component
                                     $q->where('folio', 'LIKE', '%' . $this->search . '%')
                                         ->orWhere('asunto', 'LIKE', '%' . $this->search . '%')
                                         ->orWhere('numero_oficio', 'LIKE', '%' . $this->search . '%');
+                                })
+                                ->when(strlen($this->filters['origen']) > 0, function($q){
+                                    $q->where('dependencia_id', $this->filters['origen']);
+                                })
+                                ->when(strlen($this->filters['destinatario']) > 0, function($q){
+                                    $q->where('destinatario', $this->filters['destinatario']);
+                                })
+                                ->when(strlen($this->filters['asignado']) > 0, function($q){
+                                    $q->whereHas('asignadoA', function($q){
+                                        $q->where('user_id', $this->filters['asignado']);
+                                    });
                                 })
                                 ->orderBy($this->sort, $this->direction)
                                 ->paginate($this->pagination);

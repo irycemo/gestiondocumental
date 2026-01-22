@@ -6,15 +6,51 @@
 
 <div>
 
-    <div class="mb-5">
+    <div class="mb-2 lg:mb-5">
 
         <x-header>Entradas</x-header>
 
-        <div class="flex justify-between">
+        <div class="flex justify-between gap-3 overflow-auto p-1">
 
             <div class="flex gap-3">
 
                 <input type="text" wire:model.live.debounce.500ms="search" placeholder="Buscar" class="bg-white rounded-full text-sm">
+
+                <select class="bg-white rounded-full text-sm w-40" wire:model.live="filters.origen">
+
+                    <option value="">Origen</option>
+
+                    @foreach ($dependencias as $item_dependencia)
+
+                        <option value="{{ $item_dependencia->id }}">{{ $item_dependencia->name }}</option>
+
+                    @endforeach
+
+                </select>
+
+                <select class="bg-white rounded-full text-sm w-40" wire:model.live="filters.destinatario">
+
+                    <option value="">Destinatario</option>
+
+                    @foreach ($dependencias as $item_2_dependencia)
+
+                        <option value="{{ $item_2_dependencia->id }}">{{ $item_2_dependencia->name }}</option>
+
+                    @endforeach
+
+                </select>
+
+                <select class="bg-white rounded-full text-sm w-40" wire:model.live="filters.asignado">
+
+                    <option value="">Asignado a</option>
+
+                    @foreach ($usuarios as $item_usuario)
+
+                        <option value="{{ $item_usuario->id }}">{{ $item_usuario->name }}</option>
+
+                    @endforeach
+
+                </select>
 
                 <x-input-select class="bg-white rounded-full text-sm w-min" wire:model.live="pagination">
 
@@ -29,14 +65,14 @@
 
             @can('Crear entrada')
 
-                <button wire:click="abrirModalCrear" class="bg-gray-500 hover:shadow-lg hover:bg-gray-700 text-sm py-2 px-4 text-white rounded-full hidden md:block items-center justify-center focus:outline-gray-400 focus:outline-offset-2">
+            <button wire:click="abrirModalCrear" class="bg-gray-500 hover:shadow-lg hover:bg-gray-700 text-sm py-2 px-4 text-white rounded-full hidden md:block items-center justify-center focus:outline-gray-400 focus:outline-offset-2">
 
-                    <img wire:loading wire:target="abrirModalCrear" class="mx-auto h-4 mr-1" src="{{ asset('storage/img/loading3.svg') }}" alt="Loading">
-                    Agregar nueva entrada
+                <img wire:loading wire:target="abrirModalCrear" class="mx-auto h-4 mr-1" src="{{ asset('storage/img/loading3.svg') }}" alt="Loading">
+                Agregar nueva entrada
 
-                </button>
+            </button>
 
-                <button wire:click="abrirModalCrear" class="bg-gray-500 hover:shadow-lg hover:bg-gray-700 float-right text-sm py-2 px-4 text-white rounded-full md:hidden focus:outline-gray-400 focus:outline-offset-2">+</button>
+            <button wire:click="abrirModalCrear" class="bg-gray-500 hover:shadow-lg hover:bg-gray-700 float-right text-sm py-2 px-4 text-white rounded-full md:hidden focus:outline-gray-400 focus:outline-offset-2">+</button>
 
             @endcan
 
@@ -98,9 +134,9 @@
 
                         <x-table.cell>
 
-                            <p class="mt-2">
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Asunto</span>
 
-                                <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Asunto</span>
+                            <p class="mt-2">
 
                                 {!! $entrada->asunto !!}
 
@@ -110,7 +146,7 @@
 
                         <x-table.cell>
 
-                            <span clss="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Origen</span>
+                            <span class="lg:hidden absolute top-0 left-0 bg-blue-300 px-2 text-[10px] text-white font-bold uppercase rounded-br-xl">Origen</span>
 
                             <p class="mt-2">{{ $entrada->origen->name }}</p>
 
