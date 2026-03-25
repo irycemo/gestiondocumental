@@ -493,6 +493,12 @@
 
             </div>
 
+            @error('files')
+
+                <span class="error text-sm text-red-500 p-1 px-4 mb-3 mt-1 w-full inline-flex">{{ $message }}</span>
+
+            @enderror
+
             <x-input-group for="files.*" label="" :error="$errors->first('files.*')" class="w-full">
 
                 <div class="flex flex-row flex-wrap gap-2 items-center mb-2">

@@ -58,6 +58,7 @@ class Entradas extends Component
         'modelo_editar.numero_oficio' => 'número de oficio',
         'modelo_editar.date_for_editing' => 'fecha de termino',
         'modelo_editar.dependencia_id' => 'dependencia',
+        'files' => 'archivo es obligatorio',
         'files.*.mimes' => 'Solo se admiten archivos PDF',
     ];
 
