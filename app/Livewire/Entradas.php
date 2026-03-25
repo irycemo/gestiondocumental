@@ -72,6 +72,12 @@ class Entradas extends Component
 
     }
 
+    public function updatedModeloEditarDestinatario(){
+
+        $this->usuarios = User::where('oficina_id', $this->modelo_editar->destinatario)->orderBy('name')->get();
+
+    }
+
     public function abrirModalEditar(Entrada $modelo){
 
         $this->resetearTodo();

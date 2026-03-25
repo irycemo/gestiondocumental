@@ -409,7 +409,7 @@
 
                 <x-input-group for="modelo_editar.destinatario" label="Destinatario" :error="$errors->first('modelo_editar.destinatario')" class="w-full">
 
-                    <x-input-select id="modelo_editar.destinatario" wire:model="modelo_editar.destinatario" class="">
+                    <x-input-select id="modelo_editar.destinatario" wire:model.live="modelo_editar.destinatario" class="">
 
                         <option value="">Seleccione una opción</option>
 
@@ -425,9 +425,19 @@
 
             </div>
 
-            <div class="flex flex-col md:flex-row justify-between gap-3 mb-3">
+            <div class="flex flex-col md:flex-row justify-between gap-3 mb-3 ">
 
-                <x-input-group for="asignados" label="Asignar a" :error="$errors->first('asignados')" class="w-full">
+                <x-input-select id="asignados" wire:model.live="asignados" class="w-full" multiple>
+
+                    @foreach ($usuarios as $user)
+
+                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+
+                    @endforeach
+
+                </x-input-select>
+
+                {{-- <x-input-group for="asignados" label="Asignar a" :error="$errors->first('asignados')" class="w-full">
 
                     <div x-data = "{ model: @entangle('asignados') }"
                         x-init =
@@ -469,7 +479,7 @@
 
                     </div>
 
-                </x-input-group>
+                </x-input-group> --}}
 
             </div>
 
