@@ -156,4 +156,9 @@ return [
     */
 
     'pagination_theme' => 'tailwind',
+
+    'payload' => [
+        'max_components' => 100, // Increase or decrease as needed
+    ],
+
 ];
