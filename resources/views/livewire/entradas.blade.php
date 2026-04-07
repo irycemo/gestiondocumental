@@ -313,6 +313,14 @@
 
                                     @endcan
 
+                                    <button
+                                        wire:click="reimprimirAcuse({{ $entrada->id }})"
+                                        wire:loading.attr="disabled"
+                                        class="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
+                                        role="menuitem">
+                                        Reimprimir acuse
+                                    </button>
+
                                 </div>
 
                             </div>
@@ -425,7 +433,7 @@
 
             </div>
 
-            <div class="flex flex-col md:flex-row justify-between gap-3 mb-3 ">
+            <div class="flex flex-col md:flex-row justify-between gap-3 mb-3 w-full">
 
                 <x-input-select id="asignados" wire:model.live="asignados" class="w-full" multiple>
 

@@ -3,7 +3,7 @@
     'trailingAddOn' => null,
 ])
 
-<div class="flex">
+<div class="w-full">
 
   <select {{ $attributes->merge(['class' => 'bg-white rounded text-sm w-full' . ($trailingAddOn ? ' rounded-r-none' : '')]) }}>
 

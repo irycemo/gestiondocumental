@@ -2,20 +2,21 @@
 
 namespace App\Livewire;
 
-use App\Models\File;
-use App\Models\User;
-use App\Models\Entrada;
-use App\Models\Oficina;
-use Livewire\Component;
-use App\Models\Dependencia;
-use Livewire\WithPagination;
 use App\Jobs\NotificacionesJob;
+use App\Models\Dependencia;
+use App\Models\Entrada;
+use App\Models\File;
+use App\Models\Oficina;
+use App\Models\User;
 use App\Traits\ComponentesTrait;
-use Livewire\Attributes\Computed;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Attributes\Computed;
+use Livewire\Component;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
+use Livewire\WithPagination;
 
 class Entradas extends Component
 {
@@ -113,7 +114,7 @@ class Entradas extends Component
 
         try {
 
-            DB::transaction(function () {
+            $pdf = DB::transaction(function () {
 
                 $this->modelo_editar->folio = (Entrada::max('folio') ?? 0) + 1;
                 $this->modelo_editar->oficina_id = auth()->user()->oficina_id;
@@ -146,12 +147,15 @@ class Entradas extends Component
 
                 $this->modelo_editar->asignadoA()->attach($this->asignados);
 
+                return Pdf::loadView('acuse.acuse', [
+                    'entrada' => $this->modelo_editar,
+                ])->output();
 
             });
 
             foreach ($this->asignados as $asignado) {
 
-                dispatch(new NotificacionesJob(intval($asignado), $this->modelo_editar->folio));
+               dispatch(new NotificacionesJob(intval($asignado), $this->modelo_editar->folio));
 
             }
 
@@ -159,9 +163,37 @@ class Entradas extends Component
 
             $this->dispatch('mostrarMensaje', ['success', "La entrada se creó con éxito."]);
 
+            return response()->streamDownload(
+                fn () => print($pdf),
+                'acuse.pdf'
+            );
+
         } catch (\Throwable $th){
 
             Log::error("Error al crear entrada por el usuario: (id: " . auth()->user()->id . ") " . auth()->user()->name . ". " . $th);
+            $this->dispatch('mostrarMensaje', ['error', "Ha ocurrido un error."]);
+            $this->resetearTodo();
+
+        }
+
+    }
+
+    public function reimprimirAcuse(Entrada $entrada){
+
+        try {
+
+            $pdf = Pdf::loadView('acuse.acuse', [
+                    'entrada' => $entrada,
+                ])->output();
+
+            return response()->streamDownload(
+                fn () => print($pdf),
+                'acuse.pdf'
+            );
+
+        } catch (\Throwable $th){
+
+            Log::error("Error al reimprimir acuse por el usuario: (id: " . auth()->user()->id . ") " . auth()->user()->name . ". " . $th);
             $this->dispatch('mostrarMensaje', ['error', "Ha ocurrido un error."]);
             $this->resetearTodo();
 
