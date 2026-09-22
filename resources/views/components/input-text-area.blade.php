@@ -1,1 +1,1 @@
-<textarea {{ $attributes }} rows="3" class="flex shadow-sm rounded-md border border-gray-500 text-gray-500 focus-within:ring-1 focus-within:ring-inset w-full"></textarea>
+<textarea {{ $attributes }} rows="3" class="flex shadow-sm rounded-md border border-gray-500 dark:border-gray-600 dark:bg-gray-900 text-gray-500 dark:text-gray-100 dark:placeholder-gray-500 focus-within:ring-1 focus-within:ring-inset w-full"></textarea>

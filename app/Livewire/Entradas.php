@@ -448,6 +448,14 @@ class Entradas extends Component
 
             $this->usuarios = User::where('oficina_id', auth()->user()->oficina_id)->orderBy('name')->get();
 
+            $titulares = User::whereHas('roles', function($q){
+                                    $q->where('name', 'Titular');
+                                })
+                                ->orderBy('name')
+                                ->get();
+
+            $this->usuarios = $this->usuarios->merge($titulares);
+
         }else{
 
             $this->usuarios = User::orderBy('name')->get();

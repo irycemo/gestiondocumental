@@ -146,6 +146,14 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'phase_name' => 'nombre de la fase',
+        'phase_order' => 'orden de la fase',
+        'phase_color' => 'color de la fase',
+        'task_title' => 'nombre de la tarea',
+        'task_description' => 'descripción de la tarea',
+        'group_name' => 'nombre del grupo',
+        'group_area' => 'área del grupo'
+    ],
 
 ];

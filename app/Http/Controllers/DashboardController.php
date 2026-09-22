@@ -5,73 +5,74 @@ namespace App\Http\Controllers;
 use App\Models\Conclusion;
 use App\Models\Entrada;
 use App\Models\Seguimiento;
+use Illuminate\Database\Eloquent\Builder;
 
 class DashboardController extends Controller
 {
 
     public function __invoke()
     {
-        if(auth()->user()->hasRole('Administrador')){
+        $user = auth()->user();
 
-            $entries_count = Entrada::count();
-            $entries = Entrada::with('origen')->orderBy('id','desc')->orderBy('fecha_termino', 'asc')->take(5)->get();
-            $trackings_count = Seguimiento::count();
-            $trackings = Seguimiento::with('entrada')->where('oficina_id', auth()->user()->oficina->id)->take(5)->get();
-            $conclusions_count = Conclusion::count();
-            $conclusions = Conclusion::with('entrada')->where('oficina_id', auth()->user()->oficina->id)->take(5)->get();
+        $entries_query = $this->entriesForUser($user);
 
-            return view('dashboard', compact('entries', 'trackings', 'conclusions','entries_count', 'trackings_count', 'conclusions_count'));
+        $entries_count = (clone $entries_query)->count();
 
-        }elseif(auth()->user()->hasRole(['Titular', 'Oficialia de partes'])){
+        $entries = $entries_query
+            ->with([
+                'origen',
+                'destino',
+                'asignadoA',
+                'seguimientos' => fn ($query) => $query->latest('id'),
+                'conclusiones' => fn ($query) => $query->latest('id')->with('creadoPor'),
+            ])
+            ->orderBy('id', 'desc')
+            ->orderBy('fecha_termino', 'asc')
+            ->take(6)
+            ->get();
 
-            $entries = Entrada::with('origen')
-                                ->where('creado_por', auth()->id())
-                                ->orWhereHas('asignadoA', function($q){
-                                    return $q->where('user_id', auth()->id());
-                                })
-                                ->orderBy('id','desc')
-                                ->orderBy('fecha_termino', 'asc')
-                                ->take(5)
-                                ->get();
+        $trackings_count = $this->countForUser(Seguimiento::query(), $user);
+        $conclusions_count = $this->countForUser(Conclusion::query(), $user);
 
-            $entries_count = $entries->count();
+        return view('dashboard', compact('entries', 'entries_count', 'trackings_count', 'conclusions_count'));
 
-            $trackings = Seguimiento::with('entrada')->where('oficina_id', auth()->user()->oficina->id)->take(5)->get();
+    }
 
-            $trackings_count = $trackings->count();
+    private function entriesForUser($user): Builder
+    {
 
-            $conclusions = Conclusion::with('entrada')->where('oficina_id', auth()->user()->oficina->id)->take(5)->get();
+        if ($user->hasRole('Administrador')) {
 
-            $conclusions_count = $conclusions->count();
-
-            return view('dashboard', compact('entries', 'trackings', 'conclusions','entries_count', 'trackings_count', 'conclusions_count'));
-
-        }elseif(auth()->user()->hasRole('Usuario')){
-
-            $entries = Entrada::with('origen')
-                                    ->orWhereHas('asignadoA', function($q){
-                                        return $q->where('user_id', auth()->id());
-                                    })
-                                    ->orderBy('id','desc')
-                                    ->orderBy('fecha_termino', 'asc')
-                                    ->take(5)
-                                    ->get();
-
-            $entries_count = $entries->count();
-
-            $trackings = Seguimiento::with('entrada')->where('oficina_id', auth()->user()->oficina->id)->take(5)->get();
-
-            $trackings_count = $trackings->count();
-
-            $conclusions = Conclusion::with('entrada')->where('oficina_id', auth()->user()->oficina->id)->take(5)->get();
-
-            $conclusions_count = $conclusions->count();
-
-            return view('dashboard', compact('entries', 'trackings', 'conclusions','entries_count', 'trackings_count', 'conclusions_count'));
+            return Entrada::query();
 
         }
+
+        if ($user->hasRole(['Titular', 'Oficialia de partes'])) {
+
+            return Entrada::query()->where(function ($query) use ($user) {
+                $query->where('creado_por', $user->id)
+                    ->orWhereHas('asignadoA', fn ($assigned) => $assigned->where('user_id', $user->id));
+            });
+
+        }
+
+        return Entrada::query()->whereHas('asignadoA', fn ($query) => $query->where('user_id', $user->id));
+
+    }
+
+    private function countForUser(Builder $query, $user): int
+    {
+
+        if ($user->hasRole('Administrador')) {
+
+            return $query->count();
+
+        }
+
+        $oficina_id = $user->oficina?->id;
+
+        return $oficina_id ? $query->where('oficina_id', $oficina_id)->count() : 0;
 
     }
 
 }
-

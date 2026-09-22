@@ -13,6 +13,7 @@ use App\Http\Controllers\ManualController;
 use App\Http\Controllers\EntradaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SetPasswordController;
+use App\Livewire\Kanban;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,6 +51,8 @@ Route::group(['middleware' => ['auth', 'esta.activo']], function(){
     Route::get('seguimientos', Seguimientos::class)->middleware('can:Lista de seguimientos')->name('seguimientos');
 
     Route::get('conclusiones', Conclusiones::class)->middleware('can:Lista de conclusiones')->name('conclusiones');
+
+    Route::get('kanban-board/{group?}', Kanban::class)->name('kanban-board');
 
 });
 

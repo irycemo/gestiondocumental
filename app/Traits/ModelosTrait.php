@@ -15,11 +15,27 @@ trait ModelosTrait{
         return $this->belongsTo(User::class, 'actualizado_por');
     }
 
-    public function getCreatedAtAttribute(){
-        return Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['created_at'])->format('d-m-Y H:i:s');
+    public function getCreatedAtAttribute(): ?string
+    {
+        return isset($this->attributes['created_at'])
+            ? Carbon::parse($this->attributes['created_at'])->format('d-m-Y H:i:s')
+            : null;
     }
 
-    public function getUpdatedAtAttribute(){
-        return Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['updated_at'])->format('d-m-Y H:i:s');
+    public function getUpdatedAtAttribute(): ?string
+    {
+        return isset($this->attributes['updated_at'])
+            ? Carbon::parse($this->attributes['updated_at'])->format('d-m-Y H:i:s')
+            : null;
+    }
+
+    public function getCreatedAtFormattedAttribute(): ?string
+    {
+        return $this->getCreatedAtAttribute();
+    }
+
+    public function getUpdatedAtFormattedAttribute(): ?string
+    {
+        return $this->getUpdatedAtAttribute();
     }
 }

@@ -3,10 +3,10 @@
     <div class="relative min-h-screen md:flex">
 
         {{-- Sidebar --}}
-        <div id="sidebar" class="z-50 bg-white w-64 absolute inset-y-0 left-0 transform -translate-x-full transition duration-200 ease-in-out md:relative md:translate-x-0">
+        <div id="sidebar" class="z-50 bg-white dark:bg-gray-800 w-64 absolute inset-y-0 left-0 transform -translate-x-full transition duration-200 ease-in-out md:relative md:translate-x-0">
 
             {{-- Header --}}
-            <div class="w-100 flex-none bg-white border-b-2 border-b-grey-200 flex flex-row p-5 pr-0 justify-between items-center h-20 ">
+            <div class="w-100 flex-none bg-white dark:bg-gray-800 border-b-2 border-b-grey-200 dark:border-b-gray-700 flex flex-row p-5 pr-0 justify-between items-center h-20 ">
 
                 {{-- Logo --}}
                 <a href="/" class="mx-auto">
@@ -27,9 +27,9 @@
             </div>
 
             {{-- Nav --}}
-            <nav class="p-4 text-rojo">
+            <nav class="p-4 text-rojo dark:text-gray-200">
 
-                <a href="#usuarios" class="sidebar-menu-button mb-3 capitalize font-medium text-md transition ease-in-out duration-500 flex hover  hover:bg-gray-100 p-2 px-4 rounded-xl">
+                <a href="#usuarios" class="sidebar-menu-button mb-3 capitalize font-medium text-md transition ease-in-out duration-500 flex hover  hover:bg-gray-100 dark:hover:bg-gray-700 p-2 px-4 rounded-xl">
 
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
@@ -38,7 +38,7 @@
                     Usuarios
                 </a>
 
-                <a href="#dependencias" class="sidebar-menu-button mb-3 capitalize font-medium text-md transition ease-in-out duration-500 flex hover  hover:bg-gray-100 p-2 px-4 rounded-xl">
+                <a href="#dependencias" class="sidebar-menu-button mb-3 capitalize font-medium text-md transition ease-in-out duration-500 flex hover  hover:bg-gray-100 dark:hover:bg-gray-700 p-2 px-4 rounded-xl">
 
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
@@ -47,7 +47,7 @@
                     Dependencias
                 </a>
 
-                <a href="#entradas" class="sidebar-menu-button mb-3 capitalize font-medium text-md transition ease-in-out duration-500 flex hover  hover:bg-gray-100 p-2 px-4 rounded-xl">
+                <a href="#entradas" class="sidebar-menu-button mb-3 capitalize font-medium text-md transition ease-in-out duration-500 flex hover  hover:bg-gray-100 dark:hover:bg-gray-700 p-2 px-4 rounded-xl">
 
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20" />
@@ -56,7 +56,7 @@
                     Entradas
                 </a>
 
-                <a href="#seguimiento" class="sidebar-menu-button mb-3 capitalize font-medium text-md transition ease-in-out duration-500 flex hover  hover:bg-gray-100 p-2 px-4 rounded-xl">
+                <a href="#seguimiento" class="sidebar-menu-button mb-3 capitalize font-medium text-md transition ease-in-out duration-500 flex hover  hover:bg-gray-100 dark:hover:bg-gray-700 p-2 px-4 rounded-xl">
 
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 21h7a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v11m0 5l4.879-4.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242z" />
@@ -65,7 +65,7 @@
                     Seguimiento
                 </a>
 
-                <a href="#conclusiones" class="sidebar-menu-button mb-3 capitalize font-medium text-md transition ease-in-out duration-500 flex hover  hover:bg-gray-100 p-2 px-4 rounded-xl">
+                <a href="#conclusiones" class="sidebar-menu-button mb-3 capitalize font-medium text-md transition ease-in-out duration-500 flex hover  hover:bg-gray-100 dark:hover:bg-gray-700 p-2 px-4 rounded-xl">
 
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
@@ -80,7 +80,7 @@
 
         <div class="flex-1 flex-col flex max-h-screen overflow-x-auto min-h-screen">
 
-            <div class="w-100 bg-white border-b-2 border-b-grey-200 flex-none flex flex-row p-5 justify-between items-center h-20">
+            <div class="w-100 bg-white dark:bg-gray-800 border-b-2 border-b-grey-200 dark:border-b-gray-700 flex-none flex flex-row p-5 justify-between items-center h-20">
 
                 <!-- Mobile menu button-->
                 <div class="flex items-center">
@@ -96,19 +96,19 @@
                 </div>
 
                 {{-- Logo --}}
-                <p class="font-semibold text-2xl text-rojo">Manual de Usuario</p>
+                <p class="font-semibold text-2xl text-rojo dark:text-gray-100">Manual de Usuario</p>
 
                 <div></div>
 
             </div>
 
-            <div class="bg-white flex-1 overflow-y-auto py-8 md:border-l-2 border-l-grey-200 p-4">
+            <div class="bg-white dark:bg-gray-900 flex-1 overflow-y-auto py-8 md:border-l-2 border-l-grey-200 dark:border-l-gray-700 p-4 text-gray-700 dark:text-gray-300">
 
                 <div class="lg:w-2/3 mx-auto rounded-xl">
 
                     <div class="capitulo mb-10" id="introduccion">
 
-                        <p class="text-2xl font-semibold text-rojo mb-5">Introducción</p>
+                        <p class="text-2xl font-semibold text-rojo dark:text-gray-100 mb-5">Introducción</p>
 
                         <div class="  px-3">
 
@@ -126,7 +126,7 @@
 
                     <div class="capitulo mb-10" id="usuarios">
 
-                        <p class="text-2xl font-semibold text-rojo mb-5">Usuarios</p>
+                        <p class="text-2xl font-semibold text-rojo dark:text-gray-100 mb-5">Usuarios</p>
 
                         <div class="  px-3">
 
@@ -187,7 +187,7 @@
 
                     <div class="capitulo mb-10" id="dependencias">
 
-                        <p class="text-2xl font-semibold text-rojo mb-5">Dependencias</p>
+                        <p class="text-2xl font-semibold text-rojo dark:text-gray-100 mb-5">Dependencias</p>
 
                         <div class="  px-3">
 
@@ -235,7 +235,7 @@
 
                     <div class="capitulo mb-10" id="entradas">
 
-                        <p class="text-2xl font-semibold text-rojo mb-5">Entradas</p>
+                        <p class="text-2xl font-semibold text-rojo dark:text-gray-100 mb-5">Entradas</p>
 
                         <div class="  px-3">
 
@@ -306,7 +306,7 @@
 
                     <div class="capitulo mb-10" id="seguimiento">
 
-                        <p class="text-2xl font-semibold text-rojo mb-5">Seguimiento</p>
+                        <p class="text-2xl font-semibold text-rojo dark:text-gray-100 mb-5">Seguimiento</p>
 
                         <div class="  px-3">
 
@@ -368,7 +368,7 @@
 
                     <div class="capitulo mb-10" id="conclusiones">
 
-                        <p class="text-2xl font-semibold text-rojo mb-5">Conclusiones</p>
+                        <p class="text-2xl font-semibold text-rojo dark:text-gray-100 mb-5">Conclusiones</p>
 
                         <div class="  px-3">
 

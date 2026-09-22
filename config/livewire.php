@@ -161,4 +161,9 @@ return [
         'max_components' => 100, // Increase or decrease as needed
     ],
 
+    'make_command' => [
+        'type' => 'class',  // Options: 'sfc', 'mfc', or 'class'
+        'emoji' => true,   // Whether to use ⚡ emoji prefix
+    ],
+
 ];
